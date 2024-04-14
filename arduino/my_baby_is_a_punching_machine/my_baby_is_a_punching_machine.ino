@@ -9,12 +9,17 @@ Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
 
-const int8_t SONGS_COUNT = 1;
+const int8_t SONGS_COUNT = 2;
 const char * const SONG_TITLES[] PROGMEM {
-  WASHING_YOUR_FACE_TITLE
+  WASHING_YOUR_FACE_TITLE,
+  MY_BABY_LOVES_TO_GO_POOPY_TITLE,
+};
+const uint16_t SONG_SCORES[] {
+  WASHING_YOUR_FACE_SCORE,
+  MY_BABY_LOVES_TO_GO_POOPY_SCORE,
 };
 
-int8_t songIndex = 0;
+int8_t trackIndex = 0;
 
 void setup() {
   arduboy.beginDoFirst();
@@ -25,20 +30,28 @@ void setup() {
 
 void drawDisplay() {
   tinyfont.setCursor(1, 1);
-  tinyfont.print(readFlashStringPointer(&SONG_TITLES[songIndex]));
+  tinyfont.print(readFlashStringPointer(&SONG_TITLES[trackIndex]));
+}
+
+void changeTrack(int8_t newTrackIndex) {
+  trackIndex = newTrackIndex;
+
+  if (arduboyTones.playing()) {
+    arduboyTones.tones(SONG_SCORES[trackIndex]);
+  }
 }
 
 void handleButtonPresses() {
   if (arduboy.justPressed(A_BUTTON)) {
     arduboyTones.noTone();
   } else if (arduboy.justPressed(B_BUTTON)) {
-    arduboyTones.tones(WASHING_YOUR_FACE_SCORE);
+    arduboyTones.tones(SONG_SCORES[trackIndex]);
   }
 
   if (arduboy.justPressed(RIGHT_BUTTON)) {
-    songIndex = (songIndex + 1) % SONGS_COUNT;
+    changeTrack((trackIndex + 1) % SONGS_COUNT);
   }else if (arduboy.justPressed(LEFT_BUTTON)) {
-    songIndex = songIndex > 0 ? songIndex - 1 : (SONGS_COUNT - 1);
+    changeTrack(trackIndex > 0 ? trackIndex - 1 : (SONGS_COUNT - 1));
   }
 }
 
