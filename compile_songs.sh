@@ -29,7 +29,16 @@ for filename in $PWD/midi/*.mid; do
 
     echo " - Appending to ${songs_path}"
     cat "${output_path}" | grep -v "^//" >> "${songs_path}"
-    echo "const char ${const_stub}_TITLE[] PROGMEM = \"${title}\";" >> "${songs_path}"
+    echo "const char ${const_stub}_TITLE[] PROGMEM = \"${title}\";" \
+        >> "${songs_path}"
+
+    echo " - Adding derived song length"
+    echo "const uint32_t ${const_stub}_LENGTH = " >> "${songs_path}"
+    cat "${output_path}" \
+        | grep -oE ",\d+," | grep -oE "\d+" \
+        | tr '\n' '+' \
+        >> "${songs_path}"
+    echo "0;" >> "${songs_path}"
 
     echo " - Deleting ${output_path}"
     rm "${output_path}"

@@ -14,15 +14,13 @@ const char * const SONG_TITLES[] PROGMEM = {
   WASHING_YOUR_FACE_TITLE,
   MY_BABY_LOVES_TO_GO_POOPY_TITLE,
 };
-// So these are pointers I guess?
 const uint16_t SONG_SCORES[] = {
   WASHING_YOUR_FACE_SCORE,
   MY_BABY_LOVES_TO_GO_POOPY_SCORE,
 };
-
-const String TEST_STUFF[] = {
-  "LOREM",
-  "IPSUM DOLOR"
+const uint32_t SONG_LENGTHS[] = {
+  WASHING_YOUR_FACE_LENGTH,
+  MY_BABY_LOVES_TO_GO_POOPY_LENGTH,
 };
 
 int8_t trackIndex = 0;
@@ -36,23 +34,11 @@ void setup() {
   arduboy.setFrameRate(15);
 }
 
-uint32_t getSongLength(const uint16_t *tones) {
-  uint8_t total = 0;
-
-  // Smaller var types cause infinite loop. Endpoint not right?
-  for (int16_t i = 0; &tones[i] != TONES_END; i++) {
-    if (i % 2 == 1) {
-      total += &tones[i];
-    }
-  }
-
-  // return total;
-  return &tones[0];
-}
-
 uint16_t getElapsedPlayTime() {
   if (arduboyTones.playing()) {
     millisPlayed = millis() - trackStartedMillis;
+  } else if (millisPlayed > 0) {
+    millisPlayed = SONG_LENGTHS[trackIndex];
   }
 
   return millisPlayed;
@@ -63,28 +49,7 @@ void drawDisplay() {
   tinyfont.print(readFlashStringPointer(&SONG_TITLES[trackIndex]));
 
   tinyfont.setCursor(1, 11);
-  tinyfont.print(trackIndex);
-
-  tinyfont.setCursor(20, 11);
-  // tinyfont.print(getSongLength(SONG_SCORES[trackIndex]));
-  // tinyfont.print(MY_BABY_LOVES_TO_GO_POOPY_SCORE[7]); // works
-  // tinyfont.print(&SONG_SCORES[trackIndex]); // why not?
-  // SONG_SCORES[0 and 1] are 172, rest are 0
-  tinyfont.print(pgm_read_word(SONG_SCORES[trackIndex]));
-  // pgm_read_ptr does nothing
-  // time for bed!
-
-  // why is the current score not an array?
-  // uint16_t wtf[] = SONG_SCORES[trackIndex];
-  // tinyfont.print(wtf);
-  // confused why it works for arduboyTones but not this
-  // OH!: bc ^ has inProgmem and pgm_read_word
-
-  tinyfont.setCursor(51, 11);
-  tinyfont.print(TEST_STUFF[trackIndex][0]);
-
-  tinyfont.setCursor(1, 21);
-  tinyfont.print(getElapsedPlayTime());
+  tinyfont.print(float(getElapsedPlayTime()) / SONG_LENGTHS[trackIndex]);
 }
 
 void changeTrack(int8_t newTrackIndex) {
@@ -101,6 +66,8 @@ void changeTrack(int8_t newTrackIndex) {
 void handleButtonPresses() {
   if (arduboy.justPressed(A_BUTTON)) {
     arduboyTones.noTone();
+
+    millisPlayed = 0;
   } else if (arduboy.justPressed(B_BUTTON)) {
     arduboyTones.tones(SONG_SCORES[trackIndex]);
 
