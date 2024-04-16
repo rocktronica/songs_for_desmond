@@ -21,7 +21,7 @@ for filename in $PWD/midi/*.mid; do
     output_path="${input}.c"
 
     const_stub=$(echo "${no_extension}" | tr "[a-z]" "[A-Z]" | tr " " "_")
-    title=$(echo "${no_extension}" | tr "_" " ")
+    title=$(echo "${no_extension}" | tr "[a-z]" "[A-Z]" | tr "_" " ")
 
     echo " - Creating ${output_path}"
     $midi2tones -o2 "${input}" >/dev/null
@@ -33,7 +33,7 @@ for filename in $PWD/midi/*.mid; do
         >> "${songs_path}"
 
     echo " - Adding derived song length"
-    echo "const uint32_t ${const_stub}_LENGTH = " >> "${songs_path}"
+    echo "const uint16_t ${const_stub}_LENGTH = " >> "${songs_path}"
     cat "${output_path}" \
         | grep -oE ",\d+," | grep -oE "\d+" \
         | tr '\n' '+' \
