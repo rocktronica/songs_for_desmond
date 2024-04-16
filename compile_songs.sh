@@ -7,7 +7,7 @@ set -o errexit
 set -o errtrace
 
 midi2tones=~/midi2tones/midi2tones
-songs_path="arduino/my_baby_is_a_punching_machine/songs.h"
+songs_path="arduino/songs_for_desi/songs.h"
 
 echo "#pragma once" > "${songs_path}"
 
