@@ -12,18 +12,21 @@ Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
 
-const int8_t SONGS_COUNT = 2;
+const int8_t SONGS_COUNT = 3;
 const char * const SONG_TITLES[] PROGMEM = {
   WASHING_YOUR_FACE_TITLE,
   MY_BABY_LOVES_TO_GO_POOPY_TITLE,
+  WHOS_MY_LITTLE_BABY_BIRD_TITLE,
 };
 const uint16_t SONG_SCORES[] = {
   WASHING_YOUR_FACE_SCORE,
   MY_BABY_LOVES_TO_GO_POOPY_SCORE,
+  WHOS_MY_LITTLE_BABY_BIRD_SCORE,
 };
 const uint16_t SONG_LENGTHS[] = {
   WASHING_YOUR_FACE_LENGTH,
   MY_BABY_LOVES_TO_GO_POOPY_LENGTH,
+  WHOS_MY_LITTLE_BABY_BIRD_LENGTH,
 };
 
 int8_t trackIndex = 0;
