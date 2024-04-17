@@ -7,7 +7,7 @@ set -o errexit
 set -o errtrace
 
 midi2tones=~/midi2tones/midi2tones
-songs_path="arduino/songs_for_desi/songs.h"
+songs_path="arduino/songs_for_desi/song_scores.h"
 
 echo "#pragma once" > "${songs_path}"
 
@@ -29,8 +29,6 @@ for filename in $PWD/midi/*.mid; do
 
     echo " - Appending to ${songs_path}"
     cat "${output_path}" | grep -v "^//" >> "${songs_path}"
-    echo "const char ${const_stub}_TITLE[] PROGMEM = \"${title}\";" \
-        >> "${songs_path}"
 
     echo " - Adding derived song length"
     echo "const uint16_t ${const_stub}_LENGTH = " >> "${songs_path}"

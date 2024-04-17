@@ -1,23 +1,39 @@
 #include <Arduboy2.h>
 #include <ArduboyTones.h>
 #include <Tinyfont.h>
-#include "songs.h"
+#include "song_scores.h"
 
 #include "FlashStringHelper.h"
 
 # define CHAR_SIZE            4    // TinyFont 4x4
-# define PROGRESS_BAR_HEIGHT  10
+
+# define GAP_MIN              1
+# define GAP_MAX              4
+
+# define TIME_WIDTH           (CHAR_SIZE * 3 + 4)
+# define PROGRESS_BAR_HEIGHT  CHAR_SIZE
+
+# define AVATAR_HEIGHT        (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX * 3)
+# define AVATAR_WIDTH         AVATAR_HEIGHT
 
 Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
 
 const int8_t SONGS_COUNT = 3;
+
+const char MY_BABY_LOVES_TO_GO_POOPY_TITLE[] PROGMEM =
+  "MY BABY\nLOVES TO GO\nPOOPY";
+const char WASHING_YOUR_FACE_TITLE[] PROGMEM =
+  "WASHING\nYOUR FACE";
+const char WHOS_MY_LITTLE_BABY_BIRD_TITLE[] PROGMEM =
+  "WHO'S MY\nLITTLE BABY\nBIRD";
 const char * const SONG_TITLES[] PROGMEM = {
   WASHING_YOUR_FACE_TITLE,
   MY_BABY_LOVES_TO_GO_POOPY_TITLE,
   WHOS_MY_LITTLE_BABY_BIRD_TITLE,
 };
+
 const uint16_t SONG_SCORES[] = {
   WASHING_YOUR_FACE_SCORE,
   MY_BABY_LOVES_TO_GO_POOPY_SCORE,
@@ -50,39 +66,46 @@ uint16_t getElapsedPlayTime() {
   return millisPlayed;
 }
 
-void drawCenteredText(
-  String text,
-  int8_t y,
-  uint8_t lineIndex = 0
+void drawAvatar(
+  int8_t x,
+  int8_t y
 ) {
-  tinyfont.setCursor(
-    (WIDTH - (CHAR_SIZE * text.length() + (text.length() - 1))) / 2,
-    y + (CHAR_SIZE + 1) * lineIndex
-  );
-  tinyfont.print(text);
+  // TODO: something! anything!
+  arduboy.drawRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
 }
 
-String getPrettyTime(uint16_t millis) {
+void drawPrettyTime(
+  int8_t x,
+  int8_t y,
+  uint16_t millis
+) {
   uint16_t seconds = millis / 1000;
   uint16_t minutes = floor(seconds / 60);
 
-  return String(minutes) + ":"
-    + (seconds < 10 ? "0" : "")
-    + String(seconds);
+  tinyfont.setCursor(x, y);
+  tinyfont.print(String(minutes));
+
+  tinyfont.setCursor(x + CHAR_SIZE, y);
+  tinyfont.print(":");
+
+  tinyfont.setCursor(x + CHAR_SIZE + 3, y);
+  tinyfont.print(
+      (seconds < 10 ? "0" : "")
+      + String(seconds)
+  );
 }
 
-void drawText(int8_t y) {
-  drawCenteredText(
-    String(trackIndex + 1) + "/" + String(SONGS_COUNT),
-    y, 0
-  );
-  drawCenteredText(
-    readFlashStringPointer(&SONG_TITLES[trackIndex]),
-    y, 1
+void drawText(
+  int8_t x,
+  int8_t y
+) {
+  tinyfont.setCursor(x, y);
+  tinyfont.print(
+    String(trackIndex + 1) + "/" + String(SONGS_COUNT)
   );
 
-  drawCenteredText("DADA", y, 2);
-  drawCenteredText("SONGS FOR DESI", y, 4);
+  tinyfont.setCursor(x, y + CHAR_SIZE + GAP_MAX);
+  tinyfont.print(readFlashStringPointer(&SONG_TITLES[trackIndex]));
 }
 
 void drawProgressBar(
@@ -91,25 +114,38 @@ void drawProgressBar(
 
   uint8_t width
 ) {
-  tinyfont.setCursor(x, y);
-  tinyfont.print(getPrettyTime(getElapsedPlayTime()));
-  tinyfont.setCursor(x + width - (4 * 4 + 3), y);
-  tinyfont.print(getPrettyTime(SONG_LENGTHS[trackIndex]));
+  uint8_t rectWidth = width - (TIME_WIDTH + GAP_MIN) * 2;
 
-  arduboy.drawRect(x, y + 4 + 1, width, PROGRESS_BAR_HEIGHT);
+  drawPrettyTime(
+    x, y,
+    getElapsedPlayTime()
+  );
+  drawPrettyTime(
+    x + width - TIME_WIDTH, y,
+    SONG_LENGTHS[trackIndex]
+  );
+
+  arduboy.drawRect(
+    x + TIME_WIDTH + GAP_MIN, y,
+    rectWidth,
+    PROGRESS_BAR_HEIGHT
+  );
   arduboy.fillRect(
-    x, y + 4 + 1,
-    width * float(getElapsedPlayTime()) / SONG_LENGTHS[trackIndex], PROGRESS_BAR_HEIGHT
+    x + TIME_WIDTH + GAP_MIN, y,
+    rectWidth * float(getElapsedPlayTime()) / SONG_LENGTHS[trackIndex],
+    PROGRESS_BAR_HEIGHT
   );
 }
 
 void drawDisplay() {
-  uint8_t progressBarY = HEIGHT - (CHAR_SIZE + 1 + PROGRESS_BAR_HEIGHT);
-
-  drawText((progressBarY - (4 * 5 + (5 - 1))) / 2);
+  drawAvatar(GAP_MAX, GAP_MAX);
+  drawText(
+    GAP_MAX + AVATAR_WIDTH + GAP_MAX,
+    GAP_MAX
+  );
   drawProgressBar(
-    0, progressBarY,
-    WIDTH
+    GAP_MAX, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX,
+    WIDTH - GAP_MAX * 2
   );
 }
 
