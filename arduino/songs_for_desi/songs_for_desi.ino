@@ -22,7 +22,7 @@ Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
 
-const int8_t SONGS_COUNT = 6;
+const int8_t SONGS_COUNT = 7;
 
 int8_t trackIndex = 0;
 uint16_t trackStartedMillis;
