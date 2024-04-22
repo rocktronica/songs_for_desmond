@@ -17,8 +17,11 @@
 # define TIME_WIDTH           (CHAR_SIZE * 3 + 4)
 # define PROGRESS_BAR_HEIGHT  CHAR_SIZE
 
-# define AVATAR_HEIGHT        48 // (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX * 3)
-# define AVATAR_WIDTH         48 // AVATAR_HEIGHT
+# define AVATAR_HEIGHT        (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX * 3)
+# define AVATAR_WIDTH         AVATAR_HEIGHT
+# define AVATAR_FRAMES        20
+
+# define FPS                  12
 
 Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
@@ -31,13 +34,13 @@ int8_t trackIndex = 0;
 uint16_t trackStartedMillis;
 bool isPlaying = false;
 
-int8_t frame = 0;
+int8_t animationFrame = 0;
 
 void setup() {
   arduboy.beginDoFirst();
   arduboy.waitNoButtons();
 
-  arduboy.setFrameRate(12);
+  arduboy.setFrameRate(FPS);
 }
 
 uint16_t getElapsedPlayTime() {
@@ -52,8 +55,14 @@ void drawAvatar(
   int8_t x,
   int8_t y
 ) {
-  // TODO: something! anything!
-  arduboy.drawRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
+  arduboy.fillRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
+
+  SpritesB::drawOverwrite(
+    x + (AVATAR_WIDTH - 35) / 2,
+    y + AVATAR_HEIGHT - 40 - 1,
+    avatar,
+    animationFrame
+  );
 }
 
 void drawPrettyTime(
@@ -83,8 +92,7 @@ void drawText(
 ) {
   tinyfont.setCursor(x, y);
   tinyfont.print(
-    // String(trackIndex + 1) + "/" + String(SONGS_COUNT)
-    AVATAR_WIDTH
+    String(trackIndex + 1) + "/" + String(SONGS_COUNT)
   );
 
   tinyfont.setCursor(x, y + CHAR_SIZE + GAP_MAX);
@@ -121,7 +129,7 @@ void drawProgressBar(
 }
 
 void drawIntro() {
-  SpritesB::drawOverwrite(0, 0, walk, frame);
+  SpritesB::drawOverwrite(0, 0, walk, animationFrame);
 }
 
 void drawDisplay() {
@@ -137,7 +145,12 @@ void drawDisplay() {
 }
 
 void changeTrack(int8_t newTrackIndex) {
+  if (trackIndex == newTrackIndex) {
+    return;
+  }
+
   trackIndex = newTrackIndex;
+  animationFrame = random(0, AVATAR_FRAMES - 1);
 
   if (isPlaying) {
     playCurrentSong();
@@ -175,14 +188,8 @@ void loop() {
     return;
   }
 
-  if (arduboy.pressed(LEFT_BUTTON)) {
-    frame = frame == 0 ? (11 - 1) : frame - 1;
-  } else if (arduboy.pressed(RIGHT_BUTTON)) {
-    frame = (frame + 1) % 11;
-  }
-
   arduboy.pollButtons();
-  // handleButtonPresses();
+  handleButtonPresses();
 
   if (
     isPlaying &&
@@ -201,6 +208,6 @@ void loop() {
   }
 
   arduboy.clear();
-  drawIntro();
+  drawDisplay();
   arduboy.display();
 }

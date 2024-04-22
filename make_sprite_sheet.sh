@@ -6,12 +6,12 @@
 set -o errexit
 set -o errtrace
 
-fps="4"
-rows="11"
-suffix="92x64"
+fps="15"
+rows="20"
+suffix="40x40"
 
-stub="walk"
-input="local/IMG_6863-walk-bw.mov"
+stub="avatar"
+input="local/IMG_6863-avatar-bw.mov"
 
 output_dir="local/${stub}"
 
@@ -22,7 +22,7 @@ ffmpeg -y -i $input \
     "${output_dir}/${stub}_${fps}_${rows}_%02d_${suffix}.png"
 
 convert "${output_dir}/${stub}_${fps}_${rows}_01_${suffix}.png" \
-    -colors 2 \
+    -colors 2 -depth 2 \
     "${output_dir}/${stub}_${suffix}.png"
 
 # open $output_dir
