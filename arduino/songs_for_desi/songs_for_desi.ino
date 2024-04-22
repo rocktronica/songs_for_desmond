@@ -1,6 +1,8 @@
 #include <Arduboy2.h>
 #include <ArduboyTones.h>
 #include <Tinyfont.h>
+
+#include "graphics.h"
 #include "song_lengths.h"
 #include "song_scores.h"
 #include "song_titles.h"
@@ -15,8 +17,8 @@
 # define TIME_WIDTH           (CHAR_SIZE * 3 + 4)
 # define PROGRESS_BAR_HEIGHT  CHAR_SIZE
 
-# define AVATAR_HEIGHT        (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX * 3)
-# define AVATAR_WIDTH         AVATAR_HEIGHT
+# define AVATAR_HEIGHT        48 // (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX * 3)
+# define AVATAR_WIDTH         48 // AVATAR_HEIGHT
 
 Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
@@ -29,11 +31,13 @@ int8_t trackIndex = 0;
 uint16_t trackStartedMillis;
 bool isPlaying = false;
 
+int8_t frame = 0;
+
 void setup() {
   arduboy.beginDoFirst();
   arduboy.waitNoButtons();
 
-  arduboy.setFrameRate(15);
+  arduboy.setFrameRate(12);
 }
 
 uint16_t getElapsedPlayTime() {
@@ -79,7 +83,8 @@ void drawText(
 ) {
   tinyfont.setCursor(x, y);
   tinyfont.print(
-    String(trackIndex + 1) + "/" + String(SONGS_COUNT)
+    // String(trackIndex + 1) + "/" + String(SONGS_COUNT)
+    AVATAR_WIDTH
   );
 
   tinyfont.setCursor(x, y + CHAR_SIZE + GAP_MAX);
@@ -113,6 +118,10 @@ void drawProgressBar(
     rectWidth * float(getElapsedPlayTime()) / SONG_LENGTHS[trackIndex],
     PROGRESS_BAR_HEIGHT
   );
+}
+
+void drawIntro() {
+  SpritesB::drawOverwrite(0, 0, walk, frame);
 }
 
 void drawDisplay() {
@@ -166,8 +175,14 @@ void loop() {
     return;
   }
 
+  if (arduboy.pressed(LEFT_BUTTON)) {
+    frame = frame == 0 ? (11 - 1) : frame - 1;
+  } else if (arduboy.pressed(RIGHT_BUTTON)) {
+    frame = (frame + 1) % 11;
+  }
+
   arduboy.pollButtons();
-  handleButtonPresses();
+  // handleButtonPresses();
 
   if (
     isPlaying &&
@@ -186,6 +201,6 @@ void loop() {
   }
 
   arduboy.clear();
-  drawDisplay();
+  drawIntro();
   arduboy.display();
 }
