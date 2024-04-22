@@ -23,24 +23,42 @@
 
 # define FPS                  12
 
+enum Stage {
+  Intro,
+  Operation
+};
+
 Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
 
 const int8_t SONGS_COUNT = 7; // TODO: derive
 
+Stage stage = Intro;
+int8_t animationFrame = 0;
+
 // TODO: organize
 int8_t trackIndex = 0;
 uint16_t trackStartedMillis;
 bool isPlaying = false;
 
-int8_t animationFrame = 0;
+void reset() {
+  stage = Intro;
+  animationFrame = 0;
+
+  trackIndex = 0;
+
+  changeTrack(0);
+  arduboyTones.noTone();
+}
 
 void setup() {
   arduboy.beginDoFirst();
   arduboy.waitNoButtons();
 
   arduboy.setFrameRate(FPS);
+
+  reset();
 }
 
 uint16_t getElapsedPlayTime() {
@@ -63,6 +81,10 @@ void drawAvatar(
     avatar,
     animationFrame
   );
+}
+
+void randomizeAvatar() {
+  animationFrame = random(0, AVATAR_FRAMES - 1);
 }
 
 void drawPrettyTime(
@@ -129,10 +151,22 @@ void drawProgressBar(
 }
 
 void drawIntro() {
-  SpritesB::drawOverwrite(0, 0, walk, animationFrame);
+  arduboy.fillRect(0, 0, WIDTH, HEIGHT);
+
+  if (animationFrame <= 10) {
+    SpritesB::drawOverwrite(
+      WIDTH - 92,
+      0,
+      walk,
+      animationFrame
+    );
+  }
+
+  tinyfont.setCursor(5, 5);
+  tinyfont.print("SONGS\nFOR\nDESI");
 }
 
-void drawDisplay() {
+void drawOperation() {
   drawAvatar(GAP_MAX, GAP_MAX);
   drawText(
     GAP_MAX + AVATAR_WIDTH + GAP_MAX,
@@ -150,7 +184,7 @@ void changeTrack(int8_t newTrackIndex) {
   }
 
   trackIndex = newTrackIndex;
-  animationFrame = random(0, AVATAR_FRAMES - 1);
+  randomizeAvatar();
 
   if (isPlaying) {
     playCurrentSong();
@@ -158,6 +192,14 @@ void changeTrack(int8_t newTrackIndex) {
 }
 
 void handleButtonPresses() {
+  if (
+    arduboy.pressed(A_BUTTON) &&
+    arduboy.pressed(B_BUTTON)
+  ) {
+    reset();
+    return;
+  }
+
   if (arduboy.justPressed(A_BUTTON)) {
     isPlaying = false;
   } else if (arduboy.justPressed(B_BUTTON)) {
@@ -189,7 +231,6 @@ void loop() {
   }
 
   arduboy.pollButtons();
-  handleButtonPresses();
 
   if (
     isPlaying &&
@@ -208,6 +249,32 @@ void loop() {
   }
 
   arduboy.clear();
-  drawDisplay();
+
+  if (stage == Intro) {
+    tinyfont.setTextColor(BLACK);
+    drawIntro();
+
+    // TODO: extract/name magic values
+    if (arduboy.everyXFrames(FPS / 6)) {
+      animationFrame++;
+    }
+
+    if (animationFrame > FPS * 1.5) {
+      animationFrame = 0;
+      stage = Operation;
+      tinyfont.setTextColor(WHITE);
+    }
+  } else {
+    handleButtonPresses();
+
+    if (isPlaying) {
+      if (arduboy.everyXFrames(FPS / 3)) {
+        randomizeAvatar();
+      }
+    }
+
+    drawOperation();
+  }
+
   arduboy.display();
 }
