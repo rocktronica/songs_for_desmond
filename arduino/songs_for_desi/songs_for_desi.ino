@@ -143,10 +143,15 @@ void handleButtonPresses() {
     playCurrentSong();
   }
 
-  // TODO: UP, DOWN
-  if (arduboy.justPressed(RIGHT_BUTTON)) {
+  if (
+    arduboy.justPressed(RIGHT_BUTTON) ||
+    arduboy.justPressed(UP_BUTTON)
+  ) {
     changeTrack((trackIndex + 1) % SONGS_COUNT);
-  }else if (arduboy.justPressed(LEFT_BUTTON)) {
+  }else if (
+    arduboy.justPressed(LEFT_BUTTON) ||
+    arduboy.justPressed(DOWN_BUTTON)
+  ) {
     changeTrack(trackIndex > 0 ? trackIndex - 1 : (SONGS_COUNT - 1));
   }
 }
