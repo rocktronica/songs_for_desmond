@@ -42,12 +42,14 @@ for filename in $PWD/midi/*.mid; do
     cat "${output_path}" | grep -v "^//" >> "${scores_path}"
 
     echo " - Deriving length for ${lengths_path}"
-    echo "const uint16_t ${const_stub}_LENGTH = " >> "${lengths_path}"
-    cat "${output_path}" \
-        | grep -oE ",\d+," | grep -oE "\d+" \
-        | tr '\n' '+' \
+    math_string=$(
+        cat "${output_path}" \
+            | grep -oE ",\d+," | grep -oE "\d+" \
+            | tr '\n' '+';
+        echo "0"
+    )
+    echo "const uint16_t ${const_stub}_LENGTH = $((math_string));" \
         >> "${lengths_path}"
-    echo "0;" >> "${lengths_path}"
 
     echo " - Checking ${titles_path}"
     if ! grep -q $const_stub $titles_path; then
