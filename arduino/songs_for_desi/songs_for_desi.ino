@@ -32,8 +32,6 @@ Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
 
-const int8_t SONGS_COUNT = 7; // TODO: derive
-
 Stage stage = Intro;
 int8_t animationFrame = 0;
 
