@@ -22,11 +22,12 @@ Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
 
-const int8_t SONGS_COUNT = 7;
+const int8_t SONGS_COUNT = 7; // TODO: derive
 
+// TODO: organize
 int8_t trackIndex = 0;
 uint16_t trackStartedMillis;
-uint16_t millisPlayed = 0;
+bool isPlaying = false;
 
 void setup() {
   arduboy.beginDoFirst();
@@ -36,13 +37,11 @@ void setup() {
 }
 
 uint16_t getElapsedPlayTime() {
-  if (arduboyTones.playing()) {
-    millisPlayed = millis() - trackStartedMillis;
-  } else if (millisPlayed > 0) {
-    millisPlayed = SONG_LENGTHS[trackIndex];
+  if (isPlaying) {
+    return millis() - trackStartedMillis;
   }
 
-  return millisPlayed;
+  return 0;
 }
 
 void drawAvatar(
@@ -131,31 +130,30 @@ void drawDisplay() {
 void changeTrack(int8_t newTrackIndex) {
   trackIndex = newTrackIndex;
 
-  trackStartedMillis = millis();
-  millisPlayed = 0;
-
-  if (arduboyTones.playing()) {
-    arduboyTones.tones(SONG_SCORES[trackIndex]);
+  if (isPlaying) {
+    playCurrentSong();
   }
 }
 
 void handleButtonPresses() {
   if (arduboy.justPressed(A_BUTTON)) {
-    arduboyTones.noTone();
-
-    millisPlayed = 0;
+    isPlaying = false;
   } else if (arduboy.justPressed(B_BUTTON)) {
-    arduboyTones.tones(SONG_SCORES[trackIndex]);
-
-    trackStartedMillis = millis();
-    millisPlayed = 0;
+    isPlaying = true;
+    playCurrentSong();
   }
 
+  // TODO: UP, DOWN
   if (arduboy.justPressed(RIGHT_BUTTON)) {
     changeTrack((trackIndex + 1) % SONGS_COUNT);
   }else if (arduboy.justPressed(LEFT_BUTTON)) {
     changeTrack(trackIndex > 0 ? trackIndex - 1 : (SONGS_COUNT - 1));
   }
+}
+
+void playCurrentSong() {
+  arduboyTones.tones(SONG_SCORES[trackIndex]);
+  trackStartedMillis = millis();
 }
 
 void loop() {
@@ -165,6 +163,22 @@ void loop() {
 
   arduboy.pollButtons();
   handleButtonPresses();
+
+  if (
+    isPlaying &&
+    getElapsedPlayTime() >= SONG_LENGTHS[trackIndex]
+  ) {
+    if (trackIndex < SONGS_COUNT - 1) {
+      changeTrack(trackIndex + 1);
+    } else if (trackIndex >= SONGS_COUNT - 1) {
+      isPlaying = false;
+      changeTrack(0);
+    }
+  }
+
+  if (!isPlaying) {
+    arduboyTones.noTone();
+  }
 
   arduboy.clear();
   drawDisplay();
