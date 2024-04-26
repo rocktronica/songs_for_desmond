@@ -22,6 +22,9 @@
 # define AVATAR_FRAMES        20
 
 # define FPS                  12
+# define INTRO_SECONDS        1.5
+# define INTRO_FRAMERATE      (FPS / 6)
+# define AVATAR_FRAMERATE     (FPS / 3)
 
 enum Stage {
   Intro,
@@ -32,6 +35,7 @@ Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
 
+// TODO: organize
 Stage stage = Intro;
 int8_t animationFrame = 0;
 
@@ -44,10 +48,9 @@ void reset() {
   stage = Intro;
   animationFrame = 0;
 
-  trackIndex = 0;
+  isPlaying = false;
 
   changeTrack(0);
-  arduboyTones.noTone();
 }
 
 void setup() {
@@ -189,10 +192,11 @@ void changeTrack(int8_t newTrackIndex) {
   }
 }
 
-void handleButtonPresses() {
+void handleOperationButtonPresses() {
   if (
-    arduboy.pressed(A_BUTTON) &&
-    arduboy.pressed(B_BUTTON)
+    (arduboy.justPressed(LEFT_BUTTON) && trackIndex == 0) ||
+    // TODO: fix brief flash of track 1
+    (arduboy.justPressed(RIGHT_BUTTON) && trackIndex == SONGS_COUNT - 1)
   ) {
     reset();
     return;
@@ -205,16 +209,10 @@ void handleButtonPresses() {
     playCurrentSong();
   }
 
-  if (
-    arduboy.justPressed(RIGHT_BUTTON) ||
-    arduboy.justPressed(UP_BUTTON)
-  ) {
-    changeTrack((trackIndex + 1) % SONGS_COUNT);
-  }else if (
-    arduboy.justPressed(LEFT_BUTTON) ||
-    arduboy.justPressed(DOWN_BUTTON)
-  ) {
-    changeTrack(trackIndex > 0 ? trackIndex - 1 : (SONGS_COUNT - 1));
+  if (arduboy.justPressed(RIGHT_BUTTON)) {
+    changeTrack(trackIndex + 1);
+  } else if (arduboy.justPressed(LEFT_BUTTON)) {
+    changeTrack(trackIndex - 1);
   }
 }
 
@@ -237,8 +235,7 @@ void loop() {
     if (trackIndex < SONGS_COUNT - 1) {
       changeTrack(trackIndex + 1);
     } else if (trackIndex >= SONGS_COUNT - 1) {
-      isPlaying = false;
-      changeTrack(0);
+      reset();
     }
   }
 
@@ -252,21 +249,30 @@ void loop() {
     tinyfont.setTextColor(BLACK);
     drawIntro();
 
-    // TODO: extract/name magic values
-    if (arduboy.everyXFrames(FPS / 6)) {
+    if (arduboy.everyXFrames(INTRO_FRAMERATE)) {
       animationFrame++;
     }
 
-    if (animationFrame > FPS * 1.5) {
+    if (
+      arduboy.justPressed(A_BUTTON) ||
+      arduboy.justPressed(B_BUTTON) ||
+      arduboy.justPressed(RIGHT_BUTTON) ||
+      animationFrame > FPS * INTRO_SECONDS
+    ) {
       animationFrame = 0;
       stage = Operation;
       tinyfont.setTextColor(WHITE);
+    } else if (arduboy.justPressed(LEFT_BUTTON)) {
+      animationFrame = 0;
+      stage = Operation;
+      tinyfont.setTextColor(WHITE);
+      changeTrack(SONGS_COUNT - 1);
     }
   } else {
-    handleButtonPresses();
+    handleOperationButtonPresses();
 
     if (isPlaying) {
-      if (arduboy.everyXFrames(FPS / 3)) {
+      if (arduboy.everyXFrames(AVATAR_FRAMERATE)) {
         randomizeAvatar();
       }
     }
