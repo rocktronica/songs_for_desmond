@@ -7,9 +7,9 @@ set -o errexit
 set -o errtrace
 
 midi2tones=~/midi2tones/midi2tones
-lengths_path="arduino/songs_for_desi/song_lengths.h"
-scores_path="arduino/songs_for_desi/song_scores.h"
-titles_path="arduino/songs_for_desi/song_titles.h"
+lengths_path="arduino/songs_for_desmond/song_lengths.h"
+scores_path="arduino/songs_for_desmond/song_scores.h"
+titles_path="arduino/songs_for_desmond/song_titles.h"
 
 function stub_file() {
     path=$1

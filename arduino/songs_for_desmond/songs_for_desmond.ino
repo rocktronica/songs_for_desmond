@@ -164,7 +164,7 @@ void drawIntro() {
   }
 
   tinyfont.setCursor(5, 5);
-  tinyfont.print("SONGS\nFOR\nDESI");
+  tinyfont.print("SONGS\nFOR\nDESMOND");
 }
 
 void drawOperation() {
