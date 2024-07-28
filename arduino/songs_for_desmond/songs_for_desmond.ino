@@ -27,23 +27,24 @@
 # define INTRO_FRAMERATE      (FPS / 6)
 # define AVATAR_FRAMERATE     (FPS / 3)
 
+Arduboy2 arduboy;
+ArduboyTones arduboyTones(arduboy.audio.enabled);
+Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
+
 enum Stage {
   Intro,
   Operation
 };
 
-Arduboy2 arduboy;
-ArduboyTones arduboyTones(arduboy.audio.enabled);
-Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
+struct State {
+  Stage stage = Intro;
+  int8_t animationFrame = 0;
 
-// TODO: organize
-Stage stage = Intro;
-int8_t animationFrame = 0;
+  int8_t trackIndex = 0;
+  uint16_t trackStartedMillis;
 
-// TODO: organize
-int8_t trackIndex = 0;
-uint16_t trackStartedMillis;
-bool isPlaying = false;
+  bool isPlaying = false;
+} state;
 
 // Songs are songs; tracks are ordered songs
 const int8_t TRACKS[] = {
@@ -57,10 +58,10 @@ const int8_t TRACKS[] = {
 };
 
 void reset() {
-  stage = Intro;
-  animationFrame = 0;
+  state.stage = Intro;
+  state.animationFrame = 0;
 
-  isPlaying = false;
+  state.isPlaying = false;
 
   changeTrack(0);
 }
@@ -75,8 +76,8 @@ void setup() {
 }
 
 uint16_t getElapsedPlayTime() {
-  if (isPlaying) {
-    return millis() - trackStartedMillis;
+  if (state.isPlaying) {
+    return millis() - state.trackStartedMillis;
   }
 
   return 0;
@@ -92,13 +93,13 @@ void drawAvatar(
     x + (AVATAR_WIDTH - 35) / 2,
     y + AVATAR_HEIGHT - 40 - 1,
     avatar,
-    animationFrame
+    state.animationFrame
   );
 }
 
 // TODO: try updating avatar based on pitch being played
 void randomizeAvatar() {
-  animationFrame = random(0, AVATAR_FRAMES - 1);
+  state.animationFrame = random(0, AVATAR_FRAMES - 1);
 }
 
 void drawPrettyTime(
@@ -128,11 +129,11 @@ void drawText(
 ) {
   tinyfont.setCursor(x, y);
   tinyfont.print(
-    String(trackIndex + 1) + "/" + String(SONGS_COUNT)
+    String(state.trackIndex + 1) + "/" + String(SONGS_COUNT)
   );
 
   tinyfont.setCursor(x, y + CHAR_SIZE + GAP_MAX);
-  tinyfont.print(readFlashStringPointer(&SONG_TITLES[TRACKS[trackIndex]]));
+  tinyfont.print(readFlashStringPointer(&SONG_TITLES[TRACKS[state.trackIndex]]));
 }
 
 void drawProgressBar(
@@ -149,7 +150,7 @@ void drawProgressBar(
   );
   drawPrettyTime(
     x + width - TIME_WIDTH, y,
-    SONG_LENGTHS[TRACKS[trackIndex]]
+    SONG_LENGTHS[TRACKS[state.trackIndex]]
   );
 
   arduboy.drawRect(
@@ -159,7 +160,7 @@ void drawProgressBar(
   );
   arduboy.fillRect(
     x + TIME_WIDTH + GAP_MIN, y,
-    rectWidth * float(getElapsedPlayTime()) / SONG_LENGTHS[TRACKS[trackIndex]],
+    rectWidth * float(getElapsedPlayTime()) / SONG_LENGTHS[TRACKS[state.trackIndex]],
     PROGRESS_BAR_HEIGHT
   );
 }
@@ -167,12 +168,12 @@ void drawProgressBar(
 void drawIntro() {
   arduboy.fillRect(0, 0, WIDTH, HEIGHT);
 
-  if (animationFrame <= INTRO_FRAMES) {
+  if (state.animationFrame <= INTRO_FRAMES) {
     SpritesB::drawOverwrite(
       WIDTH - 92,
       0,
       walk,
-      animationFrame
+      state.animationFrame
     );
   }
 
@@ -182,7 +183,7 @@ void drawIntro() {
 
   // TODO: remove
   tinyfont.setCursor(115, 5);
-  tinyfont.print(animationFrame);
+  tinyfont.print(state.animationFrame);
 }
 
 void drawOperation() {
@@ -198,34 +199,34 @@ void drawOperation() {
 }
 
 void changeTrack(int8_t newTrackIndex) {
-  if (trackIndex == newTrackIndex) {
+  if (state.trackIndex == newTrackIndex) {
     return;
   }
 
-  trackIndex = newTrackIndex;
+  state.trackIndex = newTrackIndex;
 
-  if (isPlaying) {
+  if (state.isPlaying) {
     playCurrentSong();
   }
 }
 
 void handleOperationButtonPresses() {
   if (arduboy.justPressed(A_BUTTON)) {
-    isPlaying = false;
+    state.isPlaying = false;
   } else if (arduboy.justPressed(B_BUTTON)) {
-    isPlaying = true;
+    state.isPlaying = true;
     playCurrentSong();
   }
 
   if (arduboy.justPressed(RIGHT_BUTTON)) {
-    changeTrack(trackIndex + 1);
+    changeTrack(state.trackIndex + 1);
     randomizeAvatar();
   } else if (arduboy.justPressed(LEFT_BUTTON)) {
-    changeTrack(trackIndex - 1);
+    changeTrack(state.trackIndex - 1);
     randomizeAvatar();
   }
 
-  if (trackIndex < 0 || trackIndex >= SONGS_COUNT) {
+  if (state.trackIndex < 0 || state.trackIndex >= SONGS_COUNT) {
     reset();
   }
 }
@@ -235,22 +236,22 @@ void handleIntroButtonPresses() {
     arduboy.justPressed(A_BUTTON) ||
     arduboy.justPressed(B_BUTTON) ||
     arduboy.justPressed(RIGHT_BUTTON) ||
-    animationFrame > FPS * INTRO_SECONDS
+    state.animationFrame > FPS * INTRO_SECONDS
   ) {
-    animationFrame = 0;
-    stage = Operation;
+    state.animationFrame = 0;
+    state.stage = Operation;
     tinyfont.setTextColor(WHITE);
   } else if (arduboy.justPressed(LEFT_BUTTON)) {
-    animationFrame = 0;
-    stage = Operation;
+    state.animationFrame = 0;
+    state.stage = Operation;
     tinyfont.setTextColor(WHITE);
     changeTrack(SONGS_COUNT - 1);
   }
 }
 
 void playCurrentSong() {
-  arduboyTones.tones(SONG_SCORES[TRACKS[trackIndex]]);
-  trackStartedMillis = millis();
+  arduboyTones.tones(SONG_SCORES[TRACKS[state.trackIndex]]);
+  state.trackStartedMillis = millis();
 }
 
 void loop() {
@@ -261,31 +262,31 @@ void loop() {
   arduboy.pollButtons();
 
   if (
-    isPlaying &&
-    getElapsedPlayTime() >= SONG_LENGTHS[TRACKS[trackIndex]]
+    state.isPlaying &&
+    getElapsedPlayTime() >= SONG_LENGTHS[TRACKS[state.trackIndex]]
   ) {
-    if (trackIndex < SONGS_COUNT - 1) {
-      changeTrack(trackIndex + 1);
-    } else if (trackIndex >= SONGS_COUNT - 1) {
+    if (state.trackIndex < SONGS_COUNT - 1) {
+      changeTrack(state.trackIndex + 1);
+    } else if (state.trackIndex >= SONGS_COUNT - 1) {
       reset();
     }
   }
 
-  if (!isPlaying) {
+  if (!state.isPlaying) {
     arduboyTones.noTone();
   }
 
   arduboy.clear();
 
-  if (stage == Intro) {
+  if (state.stage == Intro) {
     if (arduboy.everyXFrames(INTRO_FRAMERATE)) {
-      animationFrame++;
+      state.animationFrame++;
     }
 
     drawIntro();
     handleIntroButtonPresses();
   } else {
-    if (isPlaying) {
+    if (state.isPlaying) {
       if (arduboy.everyXFrames(AVATAR_FRAMERATE)) {
         randomizeAvatar();
       }
