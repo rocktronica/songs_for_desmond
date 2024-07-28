@@ -176,6 +176,7 @@ void drawIntro() {
     );
   }
 
+  tinyfont.setTextColor(BLACK);
   tinyfont.setCursor(5, 5);
   tinyfont.print("SONGS\nFOR\nDESMOND");
 
@@ -224,9 +225,26 @@ void handleOperationButtonPresses() {
     randomizeAvatar();
   }
 
-  // TODO: fix brief flash of track 1 when restarting from end
   if (trackIndex < 0 || trackIndex >= SONGS_COUNT) {
     reset();
+  }
+}
+
+void handleIntroButtonPresses() {
+  if (
+    arduboy.justPressed(A_BUTTON) ||
+    arduboy.justPressed(B_BUTTON) ||
+    arduboy.justPressed(RIGHT_BUTTON) ||
+    animationFrame > FPS * INTRO_SECONDS
+  ) {
+    animationFrame = 0;
+    stage = Operation;
+    tinyfont.setTextColor(WHITE);
+  } else if (arduboy.justPressed(LEFT_BUTTON)) {
+    animationFrame = 0;
+    stage = Operation;
+    tinyfont.setTextColor(WHITE);
+    changeTrack(SONGS_COUNT - 1);
   }
 }
 
@@ -249,7 +267,6 @@ void loop() {
     if (trackIndex < SONGS_COUNT - 1) {
       changeTrack(trackIndex + 1);
     } else if (trackIndex >= SONGS_COUNT - 1) {
-      // TODO: fix non-animating title screen
       reset();
     }
   }
@@ -261,31 +278,13 @@ void loop() {
   arduboy.clear();
 
   if (stage == Intro) {
-    tinyfont.setTextColor(BLACK);
-    drawIntro();
-
     if (arduboy.everyXFrames(INTRO_FRAMERATE)) {
       animationFrame++;
     }
 
-    if (
-      arduboy.justPressed(A_BUTTON) ||
-      arduboy.justPressed(B_BUTTON) ||
-      arduboy.justPressed(RIGHT_BUTTON) ||
-      animationFrame > FPS * INTRO_SECONDS
-    ) {
-      animationFrame = 0;
-      stage = Operation;
-      tinyfont.setTextColor(WHITE);
-    } else if (arduboy.justPressed(LEFT_BUTTON)) {
-      animationFrame = 0;
-      stage = Operation;
-      tinyfont.setTextColor(WHITE);
-      changeTrack(SONGS_COUNT - 1);
-    }
+    drawIntro();
+    handleIntroButtonPresses();
   } else {
-    handleOperationButtonPresses();
-
     if (isPlaying) {
       if (arduboy.everyXFrames(AVATAR_FRAMERATE)) {
         randomizeAvatar();
@@ -293,6 +292,7 @@ void loop() {
     }
 
     drawOperation();
+    handleOperationButtonPresses();
   }
 
   arduboy.display();
