@@ -23,6 +23,7 @@
 
 # define FPS                  12
 # define INTRO_SECONDS        1.5
+# define INTRO_FRAMES         10
 # define INTRO_FRAMERATE      (FPS / 6)
 # define AVATAR_FRAMERATE     (FPS / 3)
 
@@ -95,6 +96,7 @@ void drawAvatar(
   );
 }
 
+// TODO: try updating avatar based on pitch being played
 void randomizeAvatar() {
   animationFrame = random(0, AVATAR_FRAMES - 1);
 }
@@ -165,7 +167,7 @@ void drawProgressBar(
 void drawIntro() {
   arduboy.fillRect(0, 0, WIDTH, HEIGHT);
 
-  if (animationFrame <= 10) {
+  if (animationFrame <= INTRO_FRAMES) {
     SpritesB::drawOverwrite(
       WIDTH - 92,
       0,
@@ -176,6 +178,10 @@ void drawIntro() {
 
   tinyfont.setCursor(5, 5);
   tinyfont.print("SONGS\nFOR\nDESMOND");
+
+  // TODO: remove
+  tinyfont.setCursor(115, 5);
+  tinyfont.print(animationFrame);
 }
 
 void drawOperation() {
@@ -196,7 +202,6 @@ void changeTrack(int8_t newTrackIndex) {
   }
 
   trackIndex = newTrackIndex;
-  randomizeAvatar();
 
   if (isPlaying) {
     playCurrentSong();
@@ -204,15 +209,6 @@ void changeTrack(int8_t newTrackIndex) {
 }
 
 void handleOperationButtonPresses() {
-  if (
-    (arduboy.justPressed(LEFT_BUTTON) && trackIndex == 0) ||
-    // TODO: fix brief flash of track 1, incomplete intro
-    (arduboy.justPressed(RIGHT_BUTTON) && trackIndex == SONGS_COUNT - 1)
-  ) {
-    reset();
-    return;
-  }
-
   if (arduboy.justPressed(A_BUTTON)) {
     isPlaying = false;
   } else if (arduboy.justPressed(B_BUTTON)) {
@@ -222,8 +218,15 @@ void handleOperationButtonPresses() {
 
   if (arduboy.justPressed(RIGHT_BUTTON)) {
     changeTrack(trackIndex + 1);
+    randomizeAvatar();
   } else if (arduboy.justPressed(LEFT_BUTTON)) {
     changeTrack(trackIndex - 1);
+    randomizeAvatar();
+  }
+
+  // TODO: fix brief flash of track 1 when restarting from end
+  if (trackIndex < 0 || trackIndex >= SONGS_COUNT) {
+    reset();
   }
 }
 
