@@ -44,6 +44,17 @@ int8_t trackIndex = 0;
 uint16_t trackStartedMillis;
 bool isPlaying = false;
 
+// Songs are songs; tracks are ordered songs
+const int8_t TRACKS[] = {
+  WHOS_MY_LITTLE_BABY_BIRD,
+  ANY_KIND_OF_CAR_AND_ANY_KIND_OF_TRUCK,
+  WERE_ALMOST_HOME,
+  MY_BABY_LOVES_TO_GO_POOPY,
+  WASHING_YOUR_FACE,
+  WHOS_MY_LITTLE_DAIKINI_BABY,
+  THIS_TOWNS_GOT_A_LOT_OF_CONSTRUCTION,
+};
+
 void reset() {
   stage = Intro;
   animationFrame = 0;
@@ -119,7 +130,7 @@ void drawText(
   );
 
   tinyfont.setCursor(x, y + CHAR_SIZE + GAP_MAX);
-  tinyfont.print(readFlashStringPointer(&SONG_TITLES[trackIndex]));
+  tinyfont.print(readFlashStringPointer(&SONG_TITLES[TRACKS[trackIndex]]));
 }
 
 void drawProgressBar(
@@ -136,7 +147,7 @@ void drawProgressBar(
   );
   drawPrettyTime(
     x + width - TIME_WIDTH, y,
-    SONG_LENGTHS[trackIndex]
+    SONG_LENGTHS[TRACKS[trackIndex]]
   );
 
   arduboy.drawRect(
@@ -146,7 +157,7 @@ void drawProgressBar(
   );
   arduboy.fillRect(
     x + TIME_WIDTH + GAP_MIN, y,
-    rectWidth * float(getElapsedPlayTime()) / SONG_LENGTHS[trackIndex],
+    rectWidth * float(getElapsedPlayTime()) / SONG_LENGTHS[TRACKS[trackIndex]],
     PROGRESS_BAR_HEIGHT
   );
 }
@@ -195,7 +206,7 @@ void changeTrack(int8_t newTrackIndex) {
 void handleOperationButtonPresses() {
   if (
     (arduboy.justPressed(LEFT_BUTTON) && trackIndex == 0) ||
-    // TODO: fix brief flash of track 1
+    // TODO: fix brief flash of track 1, incomplete intro
     (arduboy.justPressed(RIGHT_BUTTON) && trackIndex == SONGS_COUNT - 1)
   ) {
     reset();
@@ -217,7 +228,7 @@ void handleOperationButtonPresses() {
 }
 
 void playCurrentSong() {
-  arduboyTones.tones(SONG_SCORES[trackIndex]);
+  arduboyTones.tones(SONG_SCORES[TRACKS[trackIndex]]);
   trackStartedMillis = millis();
 }
 
@@ -230,11 +241,12 @@ void loop() {
 
   if (
     isPlaying &&
-    getElapsedPlayTime() >= SONG_LENGTHS[trackIndex]
+    getElapsedPlayTime() >= SONG_LENGTHS[TRACKS[trackIndex]]
   ) {
     if (trackIndex < SONGS_COUNT - 1) {
       changeTrack(trackIndex + 1);
     } else if (trackIndex >= SONGS_COUNT - 1) {
+      // TODO: fix non-animating title screen
       reset();
     }
   }

@@ -28,8 +28,6 @@ stub_file $scores_path
 stub_file $lengths_path
 echo
 
-i=0
-
 function get_no_extension() {
     pathname=$1
     relative_path="$(basename $filename)"
@@ -42,6 +40,7 @@ function get_const_stub() {
     echo "${no_extension}" | tr "[a-z]" "[A-Z]" | tr " " "_"
 }
 
+i=0
 for filename in $PWD/midi/*.mid; do
     echo "${i}: ${filename}"
 
@@ -105,6 +104,19 @@ echo "};" >> "${scores_path}"
 echo "};" >> "${lengths_path}"
 
 }
+
+# TODO: encapsulate song stuff away from track usage
+# songs_for_desmond shouldn't need so much access to compiled output
+echo "Exposing compiled song order for tracks"
+echo >> "${lengths_path}"
+i=0
+for filename in $PWD/midi/*.mid; do
+    const_stub=$(get_const_stub $filename)
+
+    echo "# define ${const_stub}    ${i}" >> "${lengths_path}"
+
+    i=$((i + 1))
+done
 
 echo "Exposing SONGS_COUNT"
 echo "
