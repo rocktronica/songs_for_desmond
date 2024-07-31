@@ -14,7 +14,7 @@
 # define AVATAR_FRAMES        20
 
 # define FPS                  12
-# define INTRO_SECONDS        1.5
+# define INTRO_SECONDS        1.25
 # define INTRO_FRAMES         10
 # define INTRO_FRAMERATE      (FPS / 6)
 # define AVATAR_FRAMERATE     (FPS / 3)
@@ -106,7 +106,6 @@ void drawIntro(
   Arduboy2& arduboy,
   Tinyfont& tinyfont
 ) {
-  arduboy.fillRect(0, 0, WIDTH, HEIGHT);
 
   if (state.animationFrame <= INTRO_FRAMES) {
     SpritesB::drawOverwrite(
@@ -117,13 +116,8 @@ void drawIntro(
     );
   }
 
-  tinyfont.setTextColor(BLACK);
   tinyfont.setCursor(5, 5);
   tinyfont.print("SONGS\nFOR\nDESMOND");
-
-  // TODO: remove
-  tinyfont.setCursor(115, 5);
-  tinyfont.print(state.animationFrame);
 }
 
 void drawOperation(
