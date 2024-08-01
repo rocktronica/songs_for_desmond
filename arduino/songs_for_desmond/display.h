@@ -14,7 +14,7 @@
 # define AVATAR_FRAMES        20
 
 # define FPS                  12
-# define INTRO_SECONDS        1.25
+# define INTRO_SECONDS        1.5
 # define INTRO_FRAMES         10
 # define INTRO_FRAMERATE      (FPS / 6)
 # define AVATAR_FRAMERATE     (FPS / 3)
@@ -116,8 +116,14 @@ void drawIntro(
     );
   }
 
-  tinyfont.setCursor(5, 5);
+  tinyfont.setCursor(GAP_MAX, GAP_MAX);
   tinyfont.print("SONGS\nFOR\nDESMOND");
+
+  if (state.animationFrame > INTRO_FRAMES + 1) {
+    // TODO: derive
+    tinyfont.setCursor(105, 51);
+    tinyfont.print("2024\nDADA");
+  }
 }
 
 void drawOperation(
