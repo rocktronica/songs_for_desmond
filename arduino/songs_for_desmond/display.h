@@ -11,20 +11,22 @@
 # define TIME_WIDTH           (CHAR_SIZE * 3 + 4)
 # define PROGRESS_BAR_HEIGHT  CHAR_SIZE
 
-# define AVATAR_HEIGHT        (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX * 3)
-# define AVATAR_WIDTH         AVATAR_HEIGHT
-# define AVATAR_FRAMES        20
-
 # define FPS                  12
 # define INTRO_SECONDS        1.5
 # define INTRO_FRAMES         10
 # define INTRO_FRAMERATE      (FPS / 6)
+
+# define AVATAR_HEIGHT        (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX * 3)
+# define AVATAR_WIDTH         AVATAR_HEIGHT
+# define AVATAR_FRAMES        INTRO_FRAMES
 # define AVATAR_FRAMERATE     (FPS / 3)
+# define AVATAR_X_OFFSET      8
+# define AVATAR_Y_OFFSET      4
 
 # define OPERATION_TEXT_X     GAP_MAX + AVATAR_WIDTH + GAP_MAX
 # define OPERATION_TEXT_Y     GAP_MAX
 
-void drawAvatar(
+void drawAvatarFirst(
   int8_t x,
   int8_t y,
 
@@ -32,14 +34,18 @@ void drawAvatar(
 
   Arduboy2& arduboy
 ) {
-  arduboy.fillRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
-
   SpritesB::drawOverwrite(
-    x + (AVATAR_WIDTH - 35) / 2,
-    y + AVATAR_HEIGHT - 40 - 1,
-    avatar,
-    animationFrame
+    x - AVATAR_X_OFFSET, y - AVATAR_Y_OFFSET,
+    walk, animationFrame
   );
+  arduboy.drawRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
+
+  // HACK: fill remaining space to cover overflow...
+  // It's easier than masking, as long as it's done first!
+  arduboy.fillRect(0, 0, WIDTH, y, BLACK);
+  arduboy.fillRect(0, y, x, AVATAR_HEIGHT, BLACK);
+  arduboy.fillRect(x + AVATAR_WIDTH, y, WIDTH - x - AVATAR_WIDTH, AVATAR_HEIGHT, BLACK);
+  arduboy.fillRect(0, y + AVATAR_HEIGHT, WIDTH, HEIGHT - y - AVATAR_HEIGHT, BLACK);
 }
 
 void drawPrettyTime(
@@ -138,7 +144,7 @@ void drawOperation(
   Arduboy2& arduboy,
   Tinyfont& tinyfont
 ) {
-  drawAvatar(GAP_MAX, GAP_MAX, state.animationFrame, arduboy);
+  drawAvatarFirst(GAP_MAX, GAP_MAX, state.animationFrame, arduboy);
 
   tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
   tinyfont.print(String(state.trackIndex + 1) + "/" + String(songsCount));
