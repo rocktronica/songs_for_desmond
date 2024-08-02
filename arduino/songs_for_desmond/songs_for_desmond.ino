@@ -43,10 +43,6 @@ void randomizeAvatar() {
 }
 
 void changeTrack(int8_t newTrackIndex) {
-  if (state.trackIndex == newTrackIndex) {
-    return;
-  }
-
   state.trackIndex = newTrackIndex;
 
   if (state.isPlaying) {
@@ -66,8 +62,11 @@ void handleOperationButtonPresses() {
     changeTrack(state.trackIndex + 1);
     randomizeAvatar();
   } else if (arduboy.justPressed(LEFT_BUTTON)) {
-    // TODO: restart current track if reasonable
-    changeTrack(state.trackIndex - 1);
+    changeTrack(
+      getElapsedPlayTime(state) < 1000
+        ? state.trackIndex - 1
+        : state.trackIndex
+      );
     randomizeAvatar();
   }
 
