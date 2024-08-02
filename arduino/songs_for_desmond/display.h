@@ -19,7 +19,6 @@
 # define AVATAR_HEIGHT        (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX * 3)
 # define AVATAR_WIDTH         AVATAR_HEIGHT
 # define AVATAR_FRAMES        INTRO_FRAMES
-# define AVATAR_FRAMERATE     (FPS / 3)
 # define AVATAR_X_OFFSET      8
 # define AVATAR_Y_OFFSET      4
 

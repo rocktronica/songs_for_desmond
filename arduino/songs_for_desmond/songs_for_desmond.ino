@@ -38,8 +38,12 @@ void setup() {
 }
 
 // TODO: try updating avatar based on pitch being played
-void randomizeAvatar() {
-  state.animationFrame = random(0, AVATAR_FRAMES - 1);
+void updateAvatar() {
+  state.animationFrame = map(
+    getElapsedPlayTime(state),
+    0, getSongLength(state.trackIndex),
+    0, AVATAR_FRAMES + 1
+  );
 }
 
 void changeTrack(int8_t newTrackIndex) {
@@ -60,14 +64,14 @@ void handleOperationButtonPresses() {
 
   if (arduboy.justPressed(RIGHT_BUTTON)) {
     changeTrack(state.trackIndex + 1);
-    randomizeAvatar();
+    updateAvatar();
   } else if (arduboy.justPressed(LEFT_BUTTON)) {
     changeTrack(
       getElapsedPlayTime(state) < 1000
         ? state.trackIndex - 1
         : state.trackIndex
       );
-    randomizeAvatar();
+    updateAvatar();
   }
 
   if (state.trackIndex < 0 || state.trackIndex >= SONGS_COUNT) {
@@ -131,9 +135,7 @@ void loop() {
     handleIntroButtonPresses();
   } else {
     if (state.isPlaying) {
-      if (arduboy.everyXFrames(AVATAR_FRAMERATE)) {
-        randomizeAvatar();
-      }
+      updateAvatar();
     }
 
     drawOperation(
