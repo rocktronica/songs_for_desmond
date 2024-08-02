@@ -10,6 +10,7 @@ midi2tones=~/midi2tones/midi2tones
 lengths_path="arduino/songs_for_desmond/song_lengths.h"
 scores_path="arduino/songs_for_desmond/song_scores.h"
 titles_path="arduino/songs_for_desmond/song_titles.h"
+tracks_path="arduino/songs_for_desmond/tracks.h"
 
 function stub_file() {
     path=$1
@@ -79,6 +80,14 @@ for filename in $PWD/midi/*.mid; do
             >> "${titles_path}"
     fi
 
+    echo " - Checking ${tracks_path}"
+    if ! grep -q $const_stub $tracks_path; then
+        echo "   - Stubbing ${const_stub}"
+        echo >> "${tracks_path}"
+        echo "// TODO: move into place" >> "${tracks_path}"
+        echo "  ${const_stub}," >> "${tracks_path}"
+    fi
+
     echo " - Deleting ${output_path}"
     rm "${output_path}"
 
@@ -105,8 +114,9 @@ echo "};" >> "${lengths_path}"
 
 }
 
-# TODO: encapsulate song stuff away from track usage
-# songs_for_desmond shouldn't need so much access to compiled output
+# TODO: encapsulate song stuff away from track usage.
+# songs_for_desmond shouldn't need so much access to compiled output.
+# And why's this in lengths_path too huh?
 echo "Exposing compiled song order for tracks"
 echo >> "${lengths_path}"
 i=0

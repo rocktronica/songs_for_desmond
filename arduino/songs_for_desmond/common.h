@@ -5,21 +5,9 @@
 #include "song_scores.h"
 #include "song_titles.h"
 
-#include "FlashStringHelper.h"
+#include "tracks.h"
 
-// TODO: extract and append in compilation like song_titles
-// Songs are songs; tracks are ordered songs
-const int8_t TRACKS[] = {
-  WE_ARE_DRESSING_UP_AS_A_FAMILY_OF_SKELETONS,
-  I_MAKE_A_LITTLE_TACO,
-  WHOS_MY_LITTLE_BABY_BIRD,
-  ANY_KIND_OF_CAR_AND_ANY_KIND_OF_TRUCK,
-  WERE_ALMOST_HOME,
-  MY_BABY_LOVES_TO_GO_POOPY,
-  WASHING_YOUR_FACE,
-  WHOS_MY_LITTLE_DAIKINI_BABY,
-  THIS_TOWNS_GOT_A_LOT_OF_CONSTRUCTION,
-};
+#include "FlashStringHelper.h"
 
 enum Stage {
   Intro,
