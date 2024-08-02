@@ -1,6 +1,8 @@
 #include "common.h"
 #include "graphics.h"
 
+// REMEMBER: screen size is 128x64
+
 # define CHAR_SIZE            4    // TinyFont 4x4
 
 # define GAP_MIN              1
@@ -120,8 +122,10 @@ void drawIntro(
   tinyfont.print("SONGS\nFOR\nDESMOND");
 
   if (state.animationFrame > INTRO_FRAMES + 1) {
-    // TODO: derive
-    tinyfont.setCursor(105, 51);
+    tinyfont.setCursor(
+      WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_MAX,
+      HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_MAX
+    );
     tinyfont.print("2024\nDADA");
   }
 }
