@@ -66,6 +66,7 @@ void handleOperationButtonPresses() {
     changeTrack(state.trackIndex + 1);
     randomizeAvatar();
   } else if (arduboy.justPressed(LEFT_BUTTON)) {
+    // TODO: restart current track if reasonable
     changeTrack(state.trackIndex - 1);
     randomizeAvatar();
   }
