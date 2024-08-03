@@ -1,13 +1,12 @@
-#ifndef Common_h
-#define Common_h
+#pragma once
 
 #include "song_lengths.h"
 #include "song_scores.h"
 #include "song_titles.h"
-
 #include "tracks.h"
-
 #include "FlashStringHelper.h"
+
+# define TRACK_GAP    500
 
 enum Stage {
   Intro,
@@ -29,9 +28,8 @@ int16_t getArduboyTonesBeat(uint16_t millis, uint16_t bpm) {
   return floor(millis * 1.024 / (60000 / bpm));
 }
 
-// TODO: add small gap between songs
 uint16_t getSongLength(int8_t trackIndex) {
-  return SONG_LENGTHS[TRACKS[trackIndex]];
+  return SONG_LENGTHS[TRACKS[trackIndex]] + TRACK_GAP;
 }
 
 uint16_t getSongBPM(int8_t trackIndex) {
@@ -56,5 +54,3 @@ uint16_t getElapsedPlayTime(State& state) {
 
   return 0;
 }
-
-#endif
