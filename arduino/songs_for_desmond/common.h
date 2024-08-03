@@ -24,8 +24,18 @@ struct State {
   bool isPlaying;
 };
 
+int16_t getArduboyTonesBeat(uint16_t millis, uint16_t bpm) {
+  // HACK: adjust timing for ArduboyTones 1024ms long second
+  return floor(millis * 1.024 / (60000 / bpm));
+}
+
+// TODO: add small gap between songs
 uint16_t getSongLength(int8_t trackIndex) {
   return SONG_LENGTHS[TRACKS[trackIndex]];
+}
+
+uint16_t getSongBPM(int8_t trackIndex) {
+  return SONG_BPMS[TRACKS[trackIndex]];
 }
 
 uint16_t getSongScore(int8_t trackIndex) {
