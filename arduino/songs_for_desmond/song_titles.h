@@ -19,7 +19,7 @@ const char WHOS_MY_LITTLE_BABY_BIRD_TITLE[] PROGMEM =
 const char WHOS_MY_LITTLE_DAIKINI_BABY_TITLE[] PROGMEM =
   "WHO'S MY\nLITTLE\nDAIKINI BABY";
 
-// NOTE: must be alphabetically ordered like lengths and scores
+// NOTE: must be alphabetically ordered
 const char * const SONG_TITLES[] PROGMEM = {
   ANY_KIND_OF_CAR_AND_ANY_KIND_OF_TRUCK_TITLE,
   I_MAKE_A_LITTLE_TACO_TITLE,

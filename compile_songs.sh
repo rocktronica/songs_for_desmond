@@ -7,6 +7,8 @@ set -o errexit
 set -o errtrace
 
 midi2tones=~/midi2tones/midi2tones
+
+bpms_path="arduino/songs_for_desmond/song_bpms.h"
 lengths_path="arduino/songs_for_desmond/song_lengths.h"
 scores_path="arduino/songs_for_desmond/song_scores.h"
 titles_path="arduino/songs_for_desmond/song_titles.h"
@@ -69,6 +71,15 @@ for filename in $PWD/midi/*.mid; do
     )
     echo "const uint16_t ${const_stub}_LENGTH = $((math_string));" \
         >> "${lengths_path}"
+
+    echo " - Checking ${bpms_path}"
+    if ! grep -q $const_stub $bpms_path; then
+        echo "   - Stubbing ${const_stub}"
+        echo >> "${bpms_path}"
+        echo "// TODO: fix, move these into place" >> "${bpms_path}"
+        echo "const uint16_t ${const_stub}_BPM = 120; // ?" >> "${bpms_path}"
+        echo "  ${const_stub}_BPM," >> "${bpms_path}"
+    fi
 
     echo " - Checking ${titles_path}"
     if ! grep -q $const_stub $titles_path; then

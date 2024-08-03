@@ -1,5 +1,6 @@
 #pragma once
 
+#include "song_bpms.h"
 #include "song_lengths.h"
 #include "song_scores.h"
 #include "song_titles.h"
