@@ -2,6 +2,7 @@
 
 // Songs are songs; tracks are ordered songs
 const int8_t TRACKS[] = {
+  MY_BABY_IS_A_PUNCHING_MACHINE,
   GUY_IN_A_COP_CAR_RUNNING_A_RED_LIGHT,
   WE_ARE_DRESSING_UP_AS_A_FAMILY_OF_SKELETONS,
   WHOS_MY_LITTLE_BABY_BIRD,
