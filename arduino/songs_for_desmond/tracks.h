@@ -2,6 +2,7 @@
 
 // Songs are songs; tracks are ordered songs
 const int8_t TRACKS[] = {
+  I_THINK_A_LOT_ABOUT_RINSING_THAT_COFFEE_POT,
   GETTING_PAPA_SOME_COFFEE,
   LETS_GO_PEE_WITH_DAD,
   MR_STANDING_WHOS_MY_LITTLE_STANDING_BOY,
