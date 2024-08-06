@@ -127,15 +127,6 @@ void loop() {
 
   arduboy.pollButtons();
 
-  setBump(
-    arduboy.anyPressed(LEFT_BUTTON | RIGHT_BUTTON)
-      ? arduboy.pressed(LEFT_BUTTON) ? -1 : 1
-      : 0,
-    arduboy.anyPressed(UP_BUTTON | DOWN_BUTTON)
-      ? arduboy.pressed(UP_BUTTON) ? -1 : 1
-      : 0
-  );
-
   if (
     state.isPlaying &&
     getElapsedPlayTime(state) >= getSongLength(state.trackIndex)

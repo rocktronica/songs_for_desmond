@@ -25,14 +25,6 @@
 # define OPERATION_TEXT_X     GAP_MAX + AVATAR_WIDTH + GAP_MAX
 # define OPERATION_TEXT_Y     GAP_MAX
 
-int8_t bumpX = 0;
-int8_t bumpY = 0;
-
-void setBump(int8_t x, int8_t y) {
-  bumpX = x;
-  bumpY = y;
-}
-
 void drawAvatarFirst(
   int8_t x,
   int8_t y,
@@ -124,20 +116,20 @@ void drawIntro(
 
   if (state.animationFrame <= INTRO_FRAMES) {
     SpritesB::drawOverwrite(
-      WIDTH - 92 + bumpX,
-      bumpY,
+      WIDTH - 92,
+      0,
       walk,
       state.animationFrame
     );
   }
 
-  tinyfont.setCursor(GAP_MAX + bumpX, GAP_MAX + bumpY);
+  tinyfont.setCursor(GAP_MAX, GAP_MAX);
   tinyfont.print("SONGS\nFOR\nDESMOND");
 
   if (state.animationFrame > INTRO_FRAMES + 1) {
     tinyfont.setCursor(
-      WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_MAX + bumpX,
-      HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_MAX + bumpY
+      WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_MAX,
+      HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_MAX
     );
     tinyfont.print("2024\nDADA");
   }
@@ -151,16 +143,15 @@ void drawOperation(
   Arduboy2& arduboy,
   Tinyfont& tinyfont
 ) {
-  drawAvatarFirst(GAP_MAX + bumpX, GAP_MAX + bumpY, state.animationFrame, arduboy);
+  drawAvatarFirst(GAP_MAX, GAP_MAX, state.animationFrame, arduboy);
 
-  tinyfont.setCursor(OPERATION_TEXT_X + bumpX, OPERATION_TEXT_Y + bumpY);
+  tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
   tinyfont.print(String(state.trackIndex + 1) + "/" + String(songsCount));
-
-  tinyfont.setCursor(OPERATION_TEXT_X + bumpX, OPERATION_TEXT_Y + bumpY + CHAR_SIZE + GAP_MAX);
+  tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y + CHAR_SIZE + GAP_MAX);
   printSongTitle(state.trackIndex, tinyfont);
 
   drawProgressBar(
-    GAP_MAX + bumpX, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX + bumpY,
+    GAP_MAX, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX,
     WIDTH - GAP_MAX * 2,
     state,
     arduboy, tinyfont
