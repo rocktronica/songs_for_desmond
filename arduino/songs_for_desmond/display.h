@@ -25,6 +25,9 @@
 # define OPERATION_TEXT_X     GAP_MAX + AVATAR_WIDTH + GAP_MAX
 # define OPERATION_TEXT_Y     GAP_MAX
 
+# define VOLUME_SPRITE_WIDTH  7
+# define VOLUME_SPRITE_HEIGHT 4
+
 void drawAvatarFirst(
   int8_t x,
   int8_t y,
@@ -107,6 +110,20 @@ void drawProgressBar(
   );
 }
 
+void drawVolume(
+  int8_t x,
+  int8_t y,
+
+  State& state,
+
+  Arduboy2& arduboy
+) {
+  SpritesB::drawOverwrite(
+    x, y,
+    volume, state.volume
+  );
+}
+
 void drawIntro(
   State& state,
 
@@ -149,6 +166,12 @@ void drawOperation(
   tinyfont.print(String(state.trackIndex + 1) + "/" + String(songsCount));
   tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y + CHAR_SIZE + GAP_MAX);
   printSongTitle(state.trackIndex, tinyfont);
+
+  drawVolume(
+    WIDTH - GAP_MAX - VOLUME_SPRITE_WIDTH, OPERATION_TEXT_Y,
+    state,
+    arduboy
+  );
 
   drawProgressBar(
     GAP_MAX, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX,

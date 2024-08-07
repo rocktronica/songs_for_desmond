@@ -14,12 +14,20 @@ enum Stage {
   Operation
 };
 
+enum Volume {
+  Mute,
+  Low,
+  High
+};
+
 struct State {
   Stage stage;
   int8_t animationFrame;
 
   int8_t trackIndex;
   uint16_t trackStartedMillis;
+
+  Volume volume;
 
   bool isPlaying;
 };

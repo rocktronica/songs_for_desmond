@@ -16,6 +16,8 @@ State state = {
   0,
   0,
 
+  Low,
+
   false
 };
 
@@ -72,6 +74,22 @@ void changeTrack(int8_t newTrackIndex) {
   }
 }
 
+void updateVolume(Volume volume) {
+  state.volume = constrain(volume, LOW, High);
+
+  if (state.volume == Volume::Mute) {
+    arduboy.audio.off();
+  } else {
+    arduboy.audio.on();
+  }
+
+  arduboyTones.volumeMode(
+    state.volume == Volume::High
+      ? VOLUME_ALWAYS_HIGH
+      : VOLUME_ALWAYS_NORMAL
+  );
+}
+
 void handleOperationButtonPresses() {
   if (arduboy.justPressed(A_BUTTON)) {
     state.isPlaying = false;
@@ -90,6 +108,12 @@ void handleOperationButtonPresses() {
         : state.trackIndex
       );
     randomizeAvatar();
+  }
+
+  if (arduboy.justPressed(UP_BUTTON)) {
+    updateVolume(state.volume + 1);
+  } else if (arduboy.justPressed(DOWN_BUTTON)) {
+    updateVolume(state.volume - 1);
   }
 
   if (state.trackIndex < 0 || state.trackIndex >= SONGS_COUNT) {
