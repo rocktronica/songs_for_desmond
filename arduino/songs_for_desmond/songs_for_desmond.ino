@@ -151,10 +151,10 @@ void loop() {
 
   arduboy.pollButtons();
 
-  if (
-    state.isPlaying &&
-    getElapsedPlayTime(state) >= getSongLength(state.trackIndex)
-  ) {
+  uint16_t elapsedPlayTime = getElapsedPlayTime(state);
+  uint16_t songLength = getSongLength(state.trackIndex);
+
+  if (state.isPlaying && elapsedPlayTime >= songLength) {
     if (state.trackIndex < SONGS_COUNT - 1) {
       changeTrack(state.trackIndex + 1);
     } else if (state.trackIndex >= SONGS_COUNT - 1) {
@@ -176,7 +176,7 @@ void loop() {
     drawIntro(state, arduboy, tinyfont);
     handleIntroButtonPresses();
   } else {
-    if (state.isPlaying) {
+    if (state.isPlaying && elapsedPlayTime < songLength - TRACK_GAP) {
       updateAvatar();
     }
 
