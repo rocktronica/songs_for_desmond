@@ -7,6 +7,7 @@
 
 # define GAP_MIN              1
 # define GAP_MAX              4
+# define GAP_OUTER            4
 
 # define TIME_WIDTH           (CHAR_SIZE * 3 + 4)
 # define PROGRESS_BAR_HEIGHT  CHAR_SIZE
@@ -16,14 +17,14 @@
 # define INTRO_FRAMES         10
 # define INTRO_FRAMERATE      (FPS / 6)
 
-# define AVATAR_HEIGHT        (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX * 3)
+# define AVATAR_HEIGHT        (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_OUTER * 2 - GAP_MAX)
 # define AVATAR_WIDTH         AVATAR_HEIGHT
 # define AVATAR_FRAMES        INTRO_FRAMES - 1
 # define AVATAR_X_OFFSET      8
 # define AVATAR_Y_OFFSET      4
 
-# define OPERATION_TEXT_X     GAP_MAX + AVATAR_WIDTH + GAP_MAX
-# define OPERATION_TEXT_Y     GAP_MAX
+# define OPERATION_TEXT_X     GAP_OUTER + AVATAR_WIDTH + GAP_MAX
+# define OPERATION_TEXT_Y     GAP_OUTER
 
 # define VOLUME_SPRITE_WIDTH  7
 # define VOLUME_SPRITE_HEIGHT 4
@@ -140,13 +141,13 @@ void drawIntro(
     );
   }
 
-  tinyfont.setCursor(GAP_MAX, GAP_MAX);
+  tinyfont.setCursor(GAP_OUTER, GAP_OUTER);
   tinyfont.print("SONGS\nFOR\nDESMOND");
 
   if (state.animationFrame > INTRO_FRAMES + 1) {
     tinyfont.setCursor(
-      WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_MAX,
-      HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_MAX
+      WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_OUTER,
+      HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_OUTER
     );
     tinyfont.print("2024\nDADA");
   }
@@ -160,7 +161,7 @@ void drawOperation(
   Arduboy2& arduboy,
   Tinyfont& tinyfont
 ) {
-  drawAvatarFirst(GAP_MAX, GAP_MAX, state.animationFrame, arduboy);
+  drawAvatarFirst(GAP_OUTER, GAP_OUTER, state.animationFrame, arduboy);
 
   tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
   tinyfont.print(String(state.trackIndex + 1) + "/" + String(songsCount));
@@ -168,14 +169,14 @@ void drawOperation(
   printSongTitle(state.trackIndex, tinyfont);
 
   drawVolume(
-    WIDTH - GAP_MAX - VOLUME_SPRITE_WIDTH, OPERATION_TEXT_Y,
+    WIDTH - GAP_OUTER - VOLUME_SPRITE_WIDTH, OPERATION_TEXT_Y,
     state,
     arduboy
   );
 
   drawProgressBar(
-    GAP_MAX, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_MAX,
-    WIDTH - GAP_MAX * 2,
+    GAP_OUTER, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_OUTER,
+    WIDTH - GAP_OUTER * 2,
     state,
     arduboy, tinyfont
   );
