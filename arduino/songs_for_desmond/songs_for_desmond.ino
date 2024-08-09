@@ -66,10 +66,6 @@ void updateAvatar() {
   }
 }
 
-void restAvatar() {
-  state.animationFrame = AVATAR_REST_FRAME;
-}
-
 void changeTrack(int8_t newTrackIndex) {
   state.trackIndex = newTrackIndex;
 
@@ -182,8 +178,6 @@ void loop() {
   } else {
     if (state.isPlaying && elapsedPlayTime < songLength - TRACK_GAP) {
       updateAvatar();
-    } else {
-      restAvatar();
     }
 
     drawOperation(
