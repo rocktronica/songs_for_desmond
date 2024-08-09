@@ -13,7 +13,7 @@
 # define PROGRESS_BAR_HEIGHT  CHAR_SIZE
 
 # define FPS                  12
-# define INTRO_SECONDS        1.5
+# define INTRO_SECONDS        3
 # define INTRO_FRAMES         10
 # define INTRO_FRAMERATE      (FPS / 6)
 
@@ -29,11 +29,29 @@
 # define VOLUME_SPRITE_WIDTH  7
 # define VOLUME_SPRITE_HEIGHT 4
 
+int8_t animationFrame = 0;
+
+void resetAnimation() {
+  animationFrame = 0;
+}
+
+void incrementAnimation() {
+  animationFrame++;
+}
+
+void randomizeAvatar() {
+  int8_t newFrame = random(0, AVATAR_FRAMES + 1);
+
+  if (newFrame == animationFrame) {
+    randomizeAvatar();
+  } else {
+    animationFrame = newFrame;
+  }
+}
+
 void drawAvatarFirst(
   int8_t x,
   int8_t y,
-
-  int8_t animationFrame,
 
   Arduboy2& arduboy
 ) {
@@ -132,19 +150,19 @@ void drawIntro(
   Tinyfont& tinyfont
 ) {
 
-  if (state.animationFrame <= INTRO_FRAMES) {
+  if (animationFrame <= INTRO_FRAMES) {
     SpritesB::drawOverwrite(
       WIDTH - 92,
       0,
       walk,
-      state.animationFrame
+      animationFrame
     );
   }
 
   tinyfont.setCursor(GAP_OUTER, GAP_OUTER);
   tinyfont.print("SONGS\nFOR\nDESMOND");
 
-  if (state.animationFrame > INTRO_FRAMES + 1) {
+  if (animationFrame > INTRO_FRAMES + 1) {
     tinyfont.setCursor(
       WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_OUTER,
       HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_OUTER
@@ -161,7 +179,7 @@ void drawOperation(
   Arduboy2& arduboy,
   Tinyfont& tinyfont
 ) {
-  drawAvatarFirst(GAP_OUTER, GAP_OUTER, state.animationFrame, arduboy);
+  drawAvatarFirst(GAP_OUTER, GAP_OUTER, arduboy);
 
   tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
   tinyfont.print(String(state.trackIndex + 1) + "/" + String(songsCount));

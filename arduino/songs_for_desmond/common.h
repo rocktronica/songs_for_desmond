@@ -22,10 +22,9 @@ enum Volume {
 
 struct State {
   Stage stage;
-  int8_t animationFrame;
 
   int8_t trackIndex;
-  uint16_t trackStartedMillis;
+  uint16_t eventStarted;
 
   Volume volume;
 
@@ -58,7 +57,7 @@ void printSongTitle(int8_t trackIndex, Tinyfont& tinyfont) {
 
 uint16_t getElapsedPlayTime(State& state) {
   if (state.isPlaying) {
-    return millis() - state.trackStartedMillis;
+    return millis() - state.eventStarted;
   }
 
   return 0;

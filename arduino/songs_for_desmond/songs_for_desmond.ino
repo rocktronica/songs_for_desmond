@@ -11,23 +11,23 @@ Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
 
 State state = {
   Intro,
-  0,
-
-  0,
-  0,
-
+  0, 0,
   Low,
-
   false
 };
 
-void reset() {
-  state.stage = Intro;
-  state.animationFrame = 0;
-
+void setStage(Stage stage) {
+  state.stage = stage;
+  state.eventStarted = millis();
   state.isPlaying = false;
 
+  resetAnimation();
+
   changeTrack(0);
+}
+
+void reset() {
+  setStage(Stage::Intro);
 }
 
 void setup() {
@@ -37,16 +37,6 @@ void setup() {
   arduboy.setFrameRate(FPS);
 
   reset();
-}
-
-void randomizeAvatar() {
-  int8_t newAnimationFrame = random(0, AVATAR_FRAMES + 1);
-
-  if (newAnimationFrame == state.animationFrame) {
-    randomizeAvatar();
-  } else {
-    state.animationFrame = newAnimationFrame;
-  }
 }
 
 bool hasBeenUpdatedThisBeat = false;
@@ -125,23 +115,18 @@ void handleIntroButtonPresses() {
   if (
     arduboy.justPressed(A_BUTTON) ||
     arduboy.justPressed(B_BUTTON) ||
-    arduboy.justPressed(RIGHT_BUTTON) ||
-    state.animationFrame > FPS * INTRO_SECONDS
+    arduboy.justPressed(RIGHT_BUTTON)
   ) {
-    state.animationFrame = 0;
-    state.stage = Operation;
-    tinyfont.setTextColor(WHITE);
+    setStage(Stage::Operation);
   } else if (arduboy.justPressed(LEFT_BUTTON)) {
-    state.animationFrame = 0;
-    state.stage = Operation;
-    tinyfont.setTextColor(WHITE);
+    setStage(Stage::Operation);
     changeTrack(SONGS_COUNT - 1);
   }
 }
 
 void playCurrentSong() {
   arduboyTones.tones(getSongScore(state.trackIndex));
-  state.trackStartedMillis = millis();
+  state.eventStarted = millis();
 }
 
 void loop() {
@@ -150,43 +135,45 @@ void loop() {
   }
 
   arduboy.pollButtons();
-
-  uint16_t elapsedPlayTime = getElapsedPlayTime(state);
-  uint16_t songLength = getSongLength(state.trackIndex);
-
-  if (state.isPlaying && elapsedPlayTime >= songLength) {
-    if (state.trackIndex < SONGS_COUNT - 1) {
-      changeTrack(state.trackIndex + 1);
-    } else if (state.trackIndex >= SONGS_COUNT - 1) {
-      reset();
-    }
-  }
-
-  if (!state.isPlaying) {
-    arduboyTones.noTone();
-  }
-
   arduboy.clear();
 
   if (state.stage == Intro) {
     if (arduboy.everyXFrames(INTRO_FRAMERATE)) {
-      state.animationFrame++;
+      incrementAnimation();
     }
 
     drawIntro(state, arduboy, tinyfont);
     handleIntroButtonPresses();
   } else {
+    uint16_t elapsedPlayTime = getElapsedPlayTime(state);
+    uint16_t songLength = getSongLength(state.trackIndex);
+
+    if (state.isPlaying && elapsedPlayTime >= songLength) {
+      if (state.trackIndex < SONGS_COUNT - 1) {
+        changeTrack(state.trackIndex + 1);
+      } else if (state.trackIndex >= SONGS_COUNT - 1) {
+        return reset();
+      }
+    }
+
+    if (!state.isPlaying) {
+      arduboyTones.noTone();
+    }
+
     if (state.isPlaying && elapsedPlayTime < songLength - TRACK_GAP) {
       updateAvatar();
     }
 
-    drawOperation(
-      state,
-      SONGS_COUNT,
-      arduboy, tinyfont
-    );
+    drawOperation(state, SONGS_COUNT, arduboy, tinyfont);
     handleOperationButtonPresses();
   }
 
   arduboy.display();
+
+  if (
+    state.stage == Intro &&
+    (millis() - state.eventStarted) >= INTRO_SECONDS * 1000
+  ) {
+    setStage(Stage::Operation);
+  }
 }
