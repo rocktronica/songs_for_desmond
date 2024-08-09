@@ -40,7 +40,7 @@ void setup() {
 }
 
 void randomizeAvatar() {
-  int8_t newAnimationFrame = random(0, AVATAR_FRAMES);
+  int8_t newAnimationFrame = random(0, AVATAR_FRAMES + 1);
 
   if (newAnimationFrame == state.animationFrame) {
     randomizeAvatar();
