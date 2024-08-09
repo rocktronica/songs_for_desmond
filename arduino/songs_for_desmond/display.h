@@ -20,7 +20,9 @@
 # define AVATAR_HEIGHT        (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_OUTER * 2 - GAP_MAX)
 # define AVATAR_WIDTH         AVATAR_HEIGHT
 # define AVATAR_FRAMES        INTRO_FRAMES - 2
+# define AVATAR_REST_FRAME    INTRO_FRAMES - 1
 # define AVATAR_X_OFFSET      8
+# define AVATAR_REST_X_OFFSET 20
 # define AVATAR_Y_OFFSET      4
 
 # define OPERATION_TEXT_X     GAP_OUTER + AVATAR_WIDTH + GAP_MAX
@@ -38,7 +40,9 @@ void drawAvatarFirst(
   Arduboy2& arduboy
 ) {
   SpritesB::drawOverwrite(
-    x - AVATAR_X_OFFSET, y - AVATAR_Y_OFFSET,
+    x - (animationFrame == AVATAR_REST_FRAME
+      ? AVATAR_REST_X_OFFSET : AVATAR_X_OFFSET),
+    y - AVATAR_Y_OFFSET,
     walk, animationFrame
   );
   arduboy.drawRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
