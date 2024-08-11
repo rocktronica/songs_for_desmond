@@ -1,3 +1,5 @@
+#include <Tinyfont.h>
+
 #include "common.h"
 #include "graphics.h"
 
@@ -31,9 +33,12 @@
 
 class Display {
   int8_t animationFrame = 0;
+  Tinyfont* tinyfont;
 
   public:
-    // TODO: init w/ arduboy to create tinyfont
+    Display(Arduboy2& arduboy) {
+      tinyfont = new Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
+    }
 
     void resetAnimation() {
       animationFrame = 0;
@@ -85,21 +90,19 @@ class Display {
       int8_t x,
       int8_t y,
 
-      uint16_t millis,
-
-      Tinyfont& tinyfont
+      uint16_t millis
     ) {
       uint16_t seconds = millis / 1000;
       uint16_t minutes = floor(seconds / 60);
 
-      tinyfont.setCursor(x, y);
-      tinyfont.print(String(minutes));
+      tinyfont->setCursor(x, y);
+      tinyfont->print(String(minutes));
 
-      tinyfont.setCursor(x + CHAR_SIZE, y);
-      tinyfont.print(":");
+      tinyfont->setCursor(x + CHAR_SIZE, y);
+      tinyfont->print(":");
 
-      tinyfont.setCursor(x + CHAR_SIZE + 3, y);
-      tinyfont.print(
+      tinyfont->setCursor(x + CHAR_SIZE + 3, y);
+      tinyfont->print(
           (seconds < 10 ? "0" : "")
           + String(seconds)
       );
@@ -113,20 +116,17 @@ class Display {
 
       State& state,
 
-      Arduboy2& arduboy,
-      Tinyfont& tinyfont
+      Arduboy2& arduboy
     ) {
       uint8_t rectWidth = width - (TIME_WIDTH + GAP_MIN) * 2;
 
       drawPrettyTime(
         x, y,
-        getElapsedPlayTime(state),
-        tinyfont
+        getElapsedPlayTime(state)
       );
       drawPrettyTime(
         x + width - TIME_WIDTH, y,
-        getSongLength(state.trackIndex),
-        tinyfont
+        getSongLength(state.trackIndex)
       );
 
       arduboy.drawRect(
@@ -157,8 +157,7 @@ class Display {
     void drawIntro(
       State& state,
 
-      Arduboy2& arduboy,
-      Tinyfont& tinyfont
+      Arduboy2& arduboy
     ) {
       if (animationFrame <= INTRO_FRAMES) {
         SpritesB::drawOverwrite(
@@ -169,15 +168,15 @@ class Display {
         );
       }
 
-      tinyfont.setCursor(GAP_OUTER, GAP_OUTER);
-      tinyfont.print("SONGS\nFOR\nDESMOND");
+      tinyfont->setCursor(GAP_OUTER, GAP_OUTER);
+      tinyfont->print("SONGS\nFOR\nDESMOND");
 
       if (animationFrame > INTRO_FRAMES + 1) {
-        tinyfont.setCursor(
+        tinyfont->setCursor(
           WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_OUTER,
           HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_OUTER
         );
-        tinyfont.print("2024\nDADA");
+        tinyfont->print("2024\nDADA");
       }
     }
 
@@ -186,21 +185,27 @@ class Display {
 
       int8_t songsCount,
 
-      Arduboy2& arduboy,
-      Tinyfont& tinyfont
+      Arduboy2& arduboy
     ) {
       drawAvatarFirst(GAP_OUTER, GAP_OUTER, arduboy);
 
-      tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
-      tinyfont.print(
+      tinyfont->setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
+      tinyfont->print(
         String(state.trackIndex + 1) + "/"
         + String(songsCount)
       );
-      tinyfont.setCursor(
+
+      tinyfont->setCursor(
         OPERATION_TEXT_X,
         OPERATION_TEXT_Y + CHAR_SIZE + GAP_MAX
       );
-      printSongTitle(state.trackIndex, tinyfont);
+      // NOTE: Ideally wouldn't have any SONG_ stuff here and would
+      // rely solely on getSong...() utils, but passing progmem
+      // references is beyond my understanding, so this is what I
+      // gotta do to move on with my life
+      tinyfont->print(
+        readFlashStringPointer(&SONG_TITLES[TRACKS[state.trackIndex]])
+      );
 
       drawVolume(
         WIDTH - GAP_OUTER - VOLUME_SPRITE_WIDTH, OPERATION_TEXT_Y,
@@ -211,7 +216,7 @@ class Display {
         GAP_OUTER, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_OUTER,
         WIDTH - GAP_OUTER * 2,
         state,
-        arduboy, tinyfont
+        arduboy
       );
     }
 };

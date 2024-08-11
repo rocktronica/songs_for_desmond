@@ -6,8 +6,7 @@
 
 Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
-Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
-Display display;
+Display display(arduboy);
 
 State state = {
   Intro,
@@ -142,7 +141,7 @@ void loop() {
       display.incrementAnimation();
     }
 
-    display.drawIntro(state, arduboy, tinyfont);
+    display.drawIntro(state, arduboy);
     handleIntroButtonPresses();
   } else {
     uint16_t elapsedPlayTime = getElapsedPlayTime(state);
@@ -164,7 +163,7 @@ void loop() {
       updateAvatar();
     }
 
-    display.drawOperation(state, SONGS_COUNT, arduboy, tinyfont);
+    display.drawOperation(state, SONGS_COUNT, arduboy);
     handleOperationButtonPresses();
   }
 
