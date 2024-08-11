@@ -1,6 +1,5 @@
 #include <Arduboy2.h>
 #include <ArduboyTones.h>
-#include <Tinyfont.h>
 
 #include "common.h"
 #include "display.h"
@@ -8,6 +7,7 @@
 Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
+Display display;
 
 State state = {
   Intro,
@@ -21,7 +21,7 @@ void setStage(Stage stage) {
   state.eventStarted = millis();
   state.isPlaying = false;
 
-  resetAnimation();
+  display.resetAnimation();
 
   changeTrack(0);
 }
@@ -48,7 +48,7 @@ void updateAvatar() {
 
   if (doubleTempoBeat % 2 == 0) {
     if (!state.isPlaying || !hasBeenUpdatedThisBeat) {
-      randomizeAvatar();
+      display.randomizeAvatar();
       hasBeenUpdatedThisBeat = true;
     }
   } else {
@@ -90,14 +90,14 @@ void handleOperationButtonPresses() {
 
   if (arduboy.justPressed(RIGHT_BUTTON)) {
     changeTrack(state.trackIndex + 1);
-    randomizeAvatar();
+    display.randomizeAvatar();
   } else if (arduboy.justPressed(LEFT_BUTTON)) {
     changeTrack(
       getElapsedPlayTime(state) < 1000
         ? state.trackIndex - 1
         : state.trackIndex
       );
-    randomizeAvatar();
+    display.randomizeAvatar();
   }
 
   if (arduboy.justPressed(UP_BUTTON)) {
@@ -139,10 +139,10 @@ void loop() {
 
   if (state.stage == Intro) {
     if (arduboy.everyXFrames(INTRO_FRAMERATE)) {
-      incrementAnimation();
+      display.incrementAnimation();
     }
 
-    drawIntro(state, arduboy, tinyfont);
+    display.drawIntro(state, arduboy, tinyfont);
     handleIntroButtonPresses();
   } else {
     uint16_t elapsedPlayTime = getElapsedPlayTime(state);
@@ -164,7 +164,7 @@ void loop() {
       updateAvatar();
     }
 
-    drawOperation(state, SONGS_COUNT, arduboy, tinyfont);
+    display.drawOperation(state, SONGS_COUNT, arduboy, tinyfont);
     handleOperationButtonPresses();
   }
 

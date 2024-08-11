@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Tinyfont.h>
+
 #include "song_bpms.h"
 #include "song_lengths.h"
 #include "song_scores.h"
@@ -51,6 +53,7 @@ uint16_t getSongScore(int8_t trackIndex) {
 // NOTE: Ideally, this'd be getSongTitle and display code would stay in
 // display.h where it belongs, but passing progmem references is beyond
 // my understanding, so this is what I gotta do to move on with my life
+// TODO: move onto Display somehow
 void printSongTitle(int8_t trackIndex, Tinyfont& tinyfont) {
   tinyfont.print(readFlashStringPointer(&SONG_TITLES[TRACKS[trackIndex]]));
 }

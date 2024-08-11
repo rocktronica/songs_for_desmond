@@ -29,173 +29,189 @@
 # define VOLUME_SPRITE_WIDTH  7
 # define VOLUME_SPRITE_HEIGHT 4
 
-int8_t animationFrame = 0;
+class Display {
+  int8_t animationFrame = 0;
 
-void resetAnimation() {
-  animationFrame = 0;
-}
+  public:
+    // TODO: init w/ arduboy to create tinyfont
 
-void incrementAnimation() {
-  animationFrame++;
-}
+    void resetAnimation() {
+      animationFrame = 0;
+    }
 
-void randomizeAvatar() {
-  int8_t newFrame = random(0, AVATAR_FRAMES + 1);
+    void incrementAnimation() {
+      animationFrame++;
+    }
 
-  if (newFrame == animationFrame) {
-    randomizeAvatar();
-  } else {
-    animationFrame = newFrame;
-  }
-}
+    void randomizeAvatar() {
+      int8_t newFrame = random(0, AVATAR_FRAMES + 1);
 
-void drawAvatarFirst(
-  int8_t x,
-  int8_t y,
+      if (newFrame == animationFrame) {
+        randomizeAvatar();
+      } else {
+        animationFrame = newFrame;
+      }
+    }
 
-  Arduboy2& arduboy
-) {
-  SpritesB::drawOverwrite(
-    x - AVATAR_X_OFFSET, y - AVATAR_Y_OFFSET,
-    walk, animationFrame
-  );
-  arduboy.drawRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
+    void drawAvatarFirst(
+      int8_t x,
+      int8_t y,
 
-  // HACK: fill remaining space to cover overflow...
-  // It's easier than masking, as long as it's done first!
-  arduboy.fillRect(0, 0, WIDTH, y, BLACK);
-  arduboy.fillRect(0, y, x, AVATAR_HEIGHT, BLACK);
-  arduboy.fillRect(x + AVATAR_WIDTH, y, WIDTH - x - AVATAR_WIDTH, AVATAR_HEIGHT, BLACK);
-  arduboy.fillRect(0, y + AVATAR_HEIGHT, WIDTH, HEIGHT - y - AVATAR_HEIGHT, BLACK);
-}
+      Arduboy2& arduboy
+    ) {
+      SpritesB::drawOverwrite(
+        x - AVATAR_X_OFFSET, y - AVATAR_Y_OFFSET,
+        walk, animationFrame
+      );
+      arduboy.drawRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
 
-void drawPrettyTime(
-  int8_t x,
-  int8_t y,
+      // HACK: fill remaining space to cover overflow...
+      // It's easier than masking, as long as it's done first!
+      arduboy.fillRect(0, 0, WIDTH, y, BLACK);
+      arduboy.fillRect(0, y, x, AVATAR_HEIGHT, BLACK);
+      arduboy.fillRect(
+        x + AVATAR_WIDTH, y, WIDTH - x - AVATAR_WIDTH,
+        AVATAR_HEIGHT,
+        BLACK
+      );
+      arduboy.fillRect(
+        0, y + AVATAR_HEIGHT,
+        WIDTH, HEIGHT - y - AVATAR_HEIGHT,
+        BLACK
+      );
+    }
 
-  uint16_t millis,
+    void drawPrettyTime(
+      int8_t x,
+      int8_t y,
 
-  Tinyfont& tinyfont
-) {
-  uint16_t seconds = millis / 1000;
-  uint16_t minutes = floor(seconds / 60);
+      uint16_t millis,
 
-  tinyfont.setCursor(x, y);
-  tinyfont.print(String(minutes));
+      Tinyfont& tinyfont
+    ) {
+      uint16_t seconds = millis / 1000;
+      uint16_t minutes = floor(seconds / 60);
 
-  tinyfont.setCursor(x + CHAR_SIZE, y);
-  tinyfont.print(":");
+      tinyfont.setCursor(x, y);
+      tinyfont.print(String(minutes));
 
-  tinyfont.setCursor(x + CHAR_SIZE + 3, y);
-  tinyfont.print(
-      (seconds < 10 ? "0" : "")
-      + String(seconds)
-  );
-}
+      tinyfont.setCursor(x + CHAR_SIZE, y);
+      tinyfont.print(":");
 
-void drawProgressBar(
-  int8_t x,
-  int8_t y,
+      tinyfont.setCursor(x + CHAR_SIZE + 3, y);
+      tinyfont.print(
+          (seconds < 10 ? "0" : "")
+          + String(seconds)
+      );
+    }
 
-  uint8_t width,
+    void drawProgressBar(
+      int8_t x,
+      int8_t y,
 
-  State& state,
+      uint8_t width,
 
-  Arduboy2& arduboy,
-  Tinyfont& tinyfont
-) {
-  uint8_t rectWidth = width - (TIME_WIDTH + GAP_MIN) * 2;
+      State& state,
 
-  drawPrettyTime(
-    x, y,
-    getElapsedPlayTime(state),
-    tinyfont
-  );
-  drawPrettyTime(
-    x + width - TIME_WIDTH, y,
-    getSongLength(state.trackIndex),
-    tinyfont
-  );
+      Arduboy2& arduboy,
+      Tinyfont& tinyfont
+    ) {
+      uint8_t rectWidth = width - (TIME_WIDTH + GAP_MIN) * 2;
 
-  arduboy.drawRect(
-    x + TIME_WIDTH + GAP_MIN, y,
-    rectWidth,
-    PROGRESS_BAR_HEIGHT
-  );
-  arduboy.fillRect(
-    x + TIME_WIDTH + GAP_MIN, y,
-    rectWidth * float(getElapsedPlayTime(state)) / getSongLength(state.trackIndex),
-    PROGRESS_BAR_HEIGHT
-  );
-}
+      drawPrettyTime(
+        x, y,
+        getElapsedPlayTime(state),
+        tinyfont
+      );
+      drawPrettyTime(
+        x + width - TIME_WIDTH, y,
+        getSongLength(state.trackIndex),
+        tinyfont
+      );
 
-void drawVolume(
-  int8_t x,
-  int8_t y,
+      arduboy.drawRect(
+        x + TIME_WIDTH + GAP_MIN, y,
+        rectWidth,
+        PROGRESS_BAR_HEIGHT
+      );
+      arduboy.fillRect(
+        x + TIME_WIDTH + GAP_MIN, y,
+        rectWidth * float(getElapsedPlayTime(state))
+          / getSongLength(state.trackIndex),
+        PROGRESS_BAR_HEIGHT
+      );
+    }
 
-  State& state,
+    void drawVolume(
+      int8_t x,
+      int8_t y,
 
-  Arduboy2& arduboy
-) {
-  SpritesB::drawOverwrite(
-    x, y,
-    volume, state.volume
-  );
-}
+      State& state
+    ) {
+      SpritesB::drawOverwrite(
+        x, y,
+        volume, state.volume
+      );
+    }
 
-void drawIntro(
-  State& state,
+    void drawIntro(
+      State& state,
 
-  Arduboy2& arduboy,
-  Tinyfont& tinyfont
-) {
+      Arduboy2& arduboy,
+      Tinyfont& tinyfont
+    ) {
+      if (animationFrame <= INTRO_FRAMES) {
+        SpritesB::drawOverwrite(
+          WIDTH - 92,
+          0,
+          walk,
+          animationFrame
+        );
+      }
 
-  if (animationFrame <= INTRO_FRAMES) {
-    SpritesB::drawOverwrite(
-      WIDTH - 92,
-      0,
-      walk,
-      animationFrame
-    );
-  }
+      tinyfont.setCursor(GAP_OUTER, GAP_OUTER);
+      tinyfont.print("SONGS\nFOR\nDESMOND");
 
-  tinyfont.setCursor(GAP_OUTER, GAP_OUTER);
-  tinyfont.print("SONGS\nFOR\nDESMOND");
+      if (animationFrame > INTRO_FRAMES + 1) {
+        tinyfont.setCursor(
+          WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_OUTER,
+          HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_OUTER
+        );
+        tinyfont.print("2024\nDADA");
+      }
+    }
 
-  if (animationFrame > INTRO_FRAMES + 1) {
-    tinyfont.setCursor(
-      WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_OUTER,
-      HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_OUTER
-    );
-    tinyfont.print("2024\nDADA");
-  }
-}
+    void drawOperation(
+      State& state,
 
-void drawOperation(
-  State& state,
+      int8_t songsCount,
 
-  int8_t songsCount,
+      Arduboy2& arduboy,
+      Tinyfont& tinyfont
+    ) {
+      drawAvatarFirst(GAP_OUTER, GAP_OUTER, arduboy);
 
-  Arduboy2& arduboy,
-  Tinyfont& tinyfont
-) {
-  drawAvatarFirst(GAP_OUTER, GAP_OUTER, arduboy);
+      tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
+      tinyfont.print(
+        String(state.trackIndex + 1) + "/"
+        + String(songsCount)
+      );
+      tinyfont.setCursor(
+        OPERATION_TEXT_X,
+        OPERATION_TEXT_Y + CHAR_SIZE + GAP_MAX
+      );
+      printSongTitle(state.trackIndex, tinyfont);
 
-  tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
-  tinyfont.print(String(state.trackIndex + 1) + "/" + String(songsCount));
-  tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y + CHAR_SIZE + GAP_MAX);
-  printSongTitle(state.trackIndex, tinyfont);
+      drawVolume(
+        WIDTH - GAP_OUTER - VOLUME_SPRITE_WIDTH, OPERATION_TEXT_Y,
+        state
+      );
 
-  drawVolume(
-    WIDTH - GAP_OUTER - VOLUME_SPRITE_WIDTH, OPERATION_TEXT_Y,
-    state,
-    arduboy
-  );
-
-  drawProgressBar(
-    GAP_OUTER, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_OUTER,
-    WIDTH - GAP_OUTER * 2,
-    state,
-    arduboy, tinyfont
-  );
-}
+      drawProgressBar(
+        GAP_OUTER, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_OUTER,
+        WIDTH - GAP_OUTER * 2,
+        state,
+        arduboy, tinyfont
+      );
+    }
+};
