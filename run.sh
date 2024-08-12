@@ -52,6 +52,8 @@ function compile() {
         --verbose \
         "${input_path}"
 
+    cp "${build_path}" "${stub}.ino.hex"
+
     echo
 }
 
