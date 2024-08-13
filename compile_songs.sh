@@ -138,8 +138,3 @@ for filename in $PWD/midi/*.mid; do
 
     i=$((i + 1))
 done
-
-echo "Exposing SONGS_COUNT"
-echo "
-# define SONGS_COUNT     ${i}" \
-    >> "${lengths_path}"

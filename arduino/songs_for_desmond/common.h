@@ -9,6 +9,8 @@
 
 # define TRACK_GAP    500
 
+const int8_t SONGS_COUNT = sizeof(TRACKS) / sizeof(int8_t);
+
 enum Stage {
   Intro,
   Operation
