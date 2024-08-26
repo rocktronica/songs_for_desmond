@@ -2,7 +2,7 @@
 #include <ArduboyTones.h>
 
 #include "common.h"
-#include "display.h"
+#include "Display.h"
 
 Arduboy2 arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
