@@ -28,7 +28,7 @@ struct State {
   Stage stage;
 
   int8_t trackIndex;
-  uint16_t eventStarted;
+  uint32_t eventStarted;
 
   Volume volume;
 
