@@ -6,7 +6,7 @@ One thing nobody tells you about being a parent is that, as you go about the day
 
 The other thing nobody tells you is that the songs... are _good_.
 
-"Songs for Desmond" collects ours into a kind of 1 bit love letter: a 25 track album of minimalist square wave melodies, released exclusively on an [Arduboy game console](https://www.arduboy.com/)\* that he can carry around with him.
+"Songs for Desmond" collects ours into a kind of 1 bit love letter: a 26 track album of minimalist square wave melodies, released exclusively on an [Arduboy game console](https://www.arduboy.com/)\* that he can carry around with him.
 
 <small>(\* jk, you can [play it online too](https://tiberiusbrown.github.io/Ardens/player.html?file=https://github.com/rocktronica/songs_for_desmond/raw/main/songs_for_desmond.ino.hex))</small>
 
