@@ -67,7 +67,6 @@ class Display {
     );
 
     void drawVolume(
-      int8_t x, int8_t y,
       State& state
     );
 

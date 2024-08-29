@@ -79,6 +79,14 @@ void updateVolume(Volume volume) {
   );
 }
 
+void handleVolumeButtonPresses() {
+  if (arduboy.justPressed(UP_BUTTON)) {
+    updateVolume(state.volume + 1);
+  } else if (arduboy.justPressed(DOWN_BUTTON)) {
+    updateVolume(state.volume - 1);
+  }
+}
+
 void handleOperationButtonPresses() {
   if (arduboy.justPressed(A_BUTTON)) {
     state.isPlaying = false;
@@ -99,11 +107,7 @@ void handleOperationButtonPresses() {
     display.randomizeAvatar();
   }
 
-  if (arduboy.justPressed(UP_BUTTON)) {
-    updateVolume(state.volume + 1);
-  } else if (arduboy.justPressed(DOWN_BUTTON)) {
-    updateVolume(state.volume - 1);
-  }
+  handleVolumeButtonPresses();
 
   if (state.trackIndex < 0 || state.trackIndex >= SONGS_COUNT) {
     reset();
@@ -121,6 +125,8 @@ void handleIntroButtonPresses() {
     setStage(Stage::Operation);
     changeTrack(SONGS_COUNT - 1);
   }
+
+  handleVolumeButtonPresses();
 }
 
 void playCurrentSong() {

@@ -109,14 +109,9 @@ void Display::drawProgressBar(
   );
 }
 
-void Display::drawVolume(
-  int8_t x,
-  int8_t y,
-
-  State& state
-) {
+void Display::drawVolume(State& state) {
   SpritesB::drawOverwrite(
-    x, y,
+    WIDTH - GAP_OUTER - VOLUME_SPRITE_WIDTH, OPERATION_TEXT_Y,
     volume, state.volume
   );
 }
@@ -137,6 +132,8 @@ void Display::drawIntro(
 
   tinyfont->setCursor(GAP_OUTER, GAP_OUTER);
   tinyfont->print("SONGS\nFOR\nDESMOND");
+
+  drawVolume(state);
 
   if (animationFrame > INTRO_FRAMES + 1) {
     tinyfont->setCursor(
@@ -174,10 +171,7 @@ void Display::drawOperation(
     readFlashStringPointer(&SONG_TITLES[TRACKS[state.trackIndex]])
   );
 
-  drawVolume(
-    WIDTH - GAP_OUTER - VOLUME_SPRITE_WIDTH, OPERATION_TEXT_Y,
-    state
-  );
+  drawVolume(state);
 
   drawProgressBar(
     GAP_OUTER, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_OUTER,
