@@ -129,6 +129,10 @@ void playCurrentSong() {
 }
 
 void loop() {
+  if (!state.isPlaying) {
+    arduboyTones.noTone();
+  }
+
   if (!arduboy.nextFrame()) {
     return;
   }
@@ -153,10 +157,6 @@ void loop() {
       } else if (state.trackIndex >= SONGS_COUNT - 1) {
         return reset();
       }
-    }
-
-    if (!state.isPlaying) {
-      arduboyTones.noTone();
     }
 
     if (state.isPlaying && elapsedPlayTime < songLength - TRACK_GAP) {
