@@ -30,11 +30,8 @@ void reset() {
 }
 
 void setup() {
-  arduboy.beginDoFirst();
-  arduboy.waitNoButtons();
-
+  arduboy.begin();
   arduboy.setFrameRate(FPS);
-
   reset();
 }
 

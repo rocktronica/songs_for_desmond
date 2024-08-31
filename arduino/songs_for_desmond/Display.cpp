@@ -123,7 +123,7 @@ void Display::drawIntro(
 ) {
   if (animationFrame <= INTRO_FRAMES) {
     SpritesB::drawOverwrite(
-      WIDTH - 92,
+      WIDTH - WALK_SPRITE_WIDTH,
       0,
       walk,
       animationFrame
@@ -135,7 +135,7 @@ void Display::drawIntro(
 
   drawVolume(state);
 
-  if (animationFrame > INTRO_FRAMES + 1) {
+  if (animationFrame > INTRO_FRAMES) {
     tinyfont->setCursor(
       WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_OUTER,
       HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_OUTER

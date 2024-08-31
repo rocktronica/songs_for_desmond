@@ -28,6 +28,7 @@
 # define AVATAR_FRAMES        INTRO_FRAMES - 2
 # define AVATAR_X_OFFSET      8
 # define AVATAR_Y_OFFSET      4
+# define WALK_SPRITE_WIDTH    92
 
 # define OPERATION_TEXT_X     GAP_OUTER + AVATAR_WIDTH + GAP_MAX
 # define OPERATION_TEXT_Y     GAP_OUTER
