@@ -58,7 +58,7 @@ void Display::drawPrettyTime(
   uint16_t millis
 ) {
   uint16_t seconds = millis / 1000;
-  uint16_t minutes = floor(seconds / 60);
+  uint16_t minutes = seconds / 60;
 
   tinyfont->setCursor(x, y);
   tinyfont->print(minutes);
