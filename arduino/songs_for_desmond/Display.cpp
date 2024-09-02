@@ -2,10 +2,10 @@
 
 #include "Display.h"
 
-Display::Display() {
-  // TODO: avoid new, try member initializer list
-  tinyfont = new Tinyfont(Arduboy2Base::sBuffer, WIDTH, HEIGHT);
-}
+Display::Display() :
+  animationFrame(0),
+  tinyfont(Arduboy2Base::sBuffer, WIDTH, HEIGHT)
+{}
 
 void Display::resetAnimation() {
   animationFrame = 0;
@@ -60,15 +60,15 @@ void Display::drawPrettyTime(
   uint16_t seconds = millis / 1000;
   uint16_t minutes = seconds / 60;
 
-  tinyfont->setCursor(x, y);
-  tinyfont->print(minutes);
+  tinyfont.setCursor(x, y);
+  tinyfont.print(minutes);
 
-  tinyfont->setCursor(x + CHAR_SIZE, y);
-  tinyfont->print(F(":"));
+  tinyfont.setCursor(x + CHAR_SIZE, y);
+  tinyfont.print(F(":"));
 
-  tinyfont->setCursor(x + CHAR_SIZE + 3, y);
-  tinyfont->print(seconds < 10 ? F("0") : F(""));
-  tinyfont->print(seconds);
+  tinyfont.setCursor(x + CHAR_SIZE + 3, y);
+  tinyfont.print(seconds < 10 ? F("0") : F(""));
+  tinyfont.print(seconds);
 }
 
 void Display::drawProgressBar(
@@ -122,17 +122,17 @@ void Display::drawIntro(
     );
   }
 
-  tinyfont->setCursor(GAP_OUTER, GAP_OUTER);
-  tinyfont->print(F("SONGS\nFOR\nDESMOND"));
+  tinyfont.setCursor(GAP_OUTER, GAP_OUTER);
+  tinyfont.print(F("SONGS\nFOR\nDESMOND"));
 
   drawVolume(state);
 
   if (animationFrame > INTRO_FRAMES) {
-    tinyfont->setCursor(
+    tinyfont.setCursor(
       WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_OUTER,
       HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_OUTER
     );
-    tinyfont->print(F("2024\nDADA"));
+    tinyfont.print(F("2024\nDADA"));
   }
 }
 
@@ -142,12 +142,12 @@ void Display::drawOperation(
 ) {
   drawAvatarFirst(GAP_OUTER, GAP_OUTER);
 
-  tinyfont->setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
-  tinyfont->print(state.trackIndex + 1);
-  tinyfont->print(F("/"));
-  tinyfont->print(songsCount);
+  tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
+  tinyfont.print(state.trackIndex + 1);
+  tinyfont.print(F("/"));
+  tinyfont.print(songsCount);
 
-  tinyfont->setCursor(
+  tinyfont.setCursor(
     OPERATION_TEXT_X,
     OPERATION_TEXT_Y + CHAR_SIZE + GAP_MAX
   );
@@ -155,7 +155,7 @@ void Display::drawOperation(
   // rely solely on getSong...() utils, but passing progmem
   // references is beyond my understanding, so this is what I
   // gotta do to move on with my life
-  tinyfont->print(
+  tinyfont.print(
     readFlashStringPointer(&SONG_TITLES[TRACKS[state.trackIndex]])
   );
 

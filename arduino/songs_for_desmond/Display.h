@@ -39,7 +39,7 @@
 class Display {
   private:
     int8_t animationFrame = 0;
-    Tinyfont* tinyfont;
+    Tinyfont tinyfont;
 
   public:
     Display();
