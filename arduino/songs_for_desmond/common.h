@@ -9,22 +9,25 @@
 #include "tracks.h"
 #include "FlashStringHelper.h"
 
-# define TRACK_GAP    500
+#define TRACK_GAP 500
 
 const int8_t SONGS_COUNT = sizeof(TRACKS) / sizeof(int8_t);
 
-enum Stage {
+enum Stage
+{
   Intro,
   Operation
 };
 
-enum Volume {
+enum Volume
+{
   Mute,
   Low,
   High
 };
 
-struct State {
+struct State
+{
   Stage stage;
 
   int8_t trackIndex;

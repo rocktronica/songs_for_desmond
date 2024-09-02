@@ -2,26 +2,32 @@
 
 #include "common.h"
 
-inline int16_t getArduboyTonesBeat(uint16_t millis, uint16_t bpm) {
+inline int16_t getArduboyTonesBeat(uint16_t millis, uint16_t bpm)
+{
   // HACK: adjust timing for ArduboyTones 1024ms long second
   // TODO: investigate effects of (60000 / bpm) being int instead of float
   return (static_cast<uint32_t>(millis) * 1024 / (60000 / bpm)) / 1000;
 }
 
-inline uint16_t getSongLength(int8_t trackIndex) {
+inline uint16_t getSongLength(int8_t trackIndex)
+{
   return SONG_LENGTHS[TRACKS[trackIndex]] + TRACK_GAP;
 }
 
-inline uint16_t getSongBPM(int8_t trackIndex) {
+inline uint16_t getSongBPM(int8_t trackIndex)
+{
   return SONG_BPMS[TRACKS[trackIndex]];
 }
 
-inline const uint16_t * getSongScore(int8_t trackIndex) {
+inline const uint16_t *getSongScore(int8_t trackIndex)
+{
   return SONG_SCORES[TRACKS[trackIndex]];
 }
 
-inline uint16_t getElapsedPlayTime(State& state) {
-  if (state.isPlaying) {
+inline uint16_t getElapsedPlayTime(State &state)
+{
+  if (state.isPlaying)
+  {
     return millis() - state.eventStarted;
   }
 
