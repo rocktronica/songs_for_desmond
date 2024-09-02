@@ -4,7 +4,8 @@
 
 inline int16_t getArduboyTonesBeat(uint16_t millis, uint16_t bpm) {
   // HACK: adjust timing for ArduboyTones 1024ms long second
-  return floor(millis * 1.024 / (60000 / bpm));
+  // TODO: investigate effects of (60000 / bpm) being int instead of float
+  return (static_cast<uint32_t>(millis) * 1024 / (60000 / bpm)) / 1000;
 }
 
 inline uint16_t getSongLength(int8_t trackIndex) {
