@@ -42,7 +42,7 @@ class Display {
     Tinyfont* tinyfont;
 
   public:
-    Display(Arduboy2& arduboy);
+    Display();
 
     void resetAnimation();
 
@@ -50,10 +50,7 @@ class Display {
 
     void randomizeAvatar();
 
-    void drawAvatarFirst(
-      int8_t x, int8_t y,
-      Arduboy2& arduboy
-    );
+    void drawAvatarFirst(int8_t x, int8_t y);
 
     void drawPrettyTime(
       int8_t x, int8_t y,
@@ -63,22 +60,12 @@ class Display {
     void drawProgressBar(
       int8_t x, int8_t y,
       uint8_t width,
-      State& state,
-      Arduboy2& arduboy
-    );
-
-    void drawVolume(
       State& state
     );
 
-    void drawIntro(
-      State& state,
-      Arduboy2& arduboy
-    );
+    void drawVolume(State& state);
 
-    void drawOperation(
-      State& state,
-      int8_t songsCount,
-      Arduboy2& arduboy
-    );
+    void drawIntro(State& state);
+
+    void drawOperation(State& state, int8_t songsCount);
 };

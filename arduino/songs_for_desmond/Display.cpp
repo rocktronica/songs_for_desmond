@@ -2,9 +2,10 @@
 
 #include "Display.h"
 
-Display::Display(Arduboy2& arduboy) {
+Display::Display() {
   animationFrame = 0;
-  tinyfont = new Tinyfont(arduboy.sBuffer, WIDTH, HEIGHT);
+  // TODO: avoid new, try member initializer list
+  tinyfont = new Tinyfont(Arduboy2Base::sBuffer, WIDTH, HEIGHT);
 }
 
 void Display::resetAnimation() {
@@ -27,26 +28,24 @@ void Display::randomizeAvatar() {
 
 void Display::drawAvatarFirst(
   int8_t x,
-  int8_t y,
-
-  Arduboy2& arduboy
+  int8_t y
 ) {
   SpritesB::drawOverwrite(
     x - AVATAR_X_OFFSET, y - AVATAR_Y_OFFSET,
     walk, animationFrame
   );
-  arduboy.drawRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
+  Arduboy2Base::drawRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
 
   // HACK: fill remaining space to cover overflow...
   // It's easier than masking, as long as it's done first!
-  arduboy.fillRect(0, 0, WIDTH, y, BLACK);
-  arduboy.fillRect(0, y, x, AVATAR_HEIGHT, BLACK);
-  arduboy.fillRect(
+  Arduboy2Base::fillRect(0, 0, WIDTH, y, BLACK);
+  Arduboy2Base::fillRect(0, y, x, AVATAR_HEIGHT, BLACK);
+  Arduboy2Base::fillRect(
     x + AVATAR_WIDTH, y, WIDTH - x - AVATAR_WIDTH,
     AVATAR_HEIGHT,
     BLACK
   );
-  arduboy.fillRect(
+  Arduboy2Base::fillRect(
     0, y + AVATAR_HEIGHT,
     WIDTH, HEIGHT - y - AVATAR_HEIGHT,
     BLACK
@@ -81,9 +80,7 @@ void Display::drawProgressBar(
 
   uint8_t width,
 
-  State& state,
-
-  Arduboy2& arduboy
+  State& state
 ) {
   uint8_t rectWidth = width - (TIME_WIDTH + GAP_MIN) * 2;
 
@@ -96,12 +93,12 @@ void Display::drawProgressBar(
     getSongLength(state.trackIndex)
   );
 
-  arduboy.drawRect(
+  Arduboy2Base::drawRect(
     x + TIME_WIDTH + GAP_MIN, y,
     rectWidth,
     PROGRESS_BAR_HEIGHT
   );
-  arduboy.fillRect(
+  Arduboy2Base::fillRect(
     x + TIME_WIDTH + GAP_MIN, y,
     rectWidth * float(getElapsedPlayTime(state))
       / getSongLength(state.trackIndex),
@@ -117,9 +114,7 @@ void Display::drawVolume(State& state) {
 }
 
 void Display::drawIntro(
-  State& state,
-
-  Arduboy2& arduboy
+  State& state
 ) {
   if (animationFrame <= INTRO_FRAMES) {
     SpritesB::drawOverwrite(
@@ -146,12 +141,9 @@ void Display::drawIntro(
 
 void Display::drawOperation(
   State& state,
-
-  int8_t songsCount,
-
-  Arduboy2& arduboy
+  int8_t songsCount
 ) {
-  drawAvatarFirst(GAP_OUTER, GAP_OUTER, arduboy);
+  drawAvatarFirst(GAP_OUTER, GAP_OUTER);
 
   tinyfont->setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
   tinyfont->print(
@@ -176,7 +168,6 @@ void Display::drawOperation(
   drawProgressBar(
     GAP_OUTER, HEIGHT - PROGRESS_BAR_HEIGHT - GAP_OUTER,
     WIDTH - GAP_OUTER * 2,
-    state,
-    arduboy
+    state
   );
 }

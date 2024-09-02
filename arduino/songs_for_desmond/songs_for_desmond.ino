@@ -4,9 +4,9 @@
 #include "common.h"
 #include "Display.h"
 
-Arduboy2 arduboy;
+Arduboy2Base arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
-Display display(arduboy);
+Display display;
 
 State state = {
   Intro,
@@ -148,7 +148,7 @@ void loop() {
       display.incrementAnimation();
     }
 
-    display.drawIntro(state, arduboy);
+    display.drawIntro(state);
     handleIntroButtonPresses();
   } else {
     uint16_t elapsedPlayTime = getElapsedPlayTime(state);
@@ -166,7 +166,7 @@ void loop() {
       updateAvatar();
     }
 
-    display.drawOperation(state, SONGS_COUNT, arduboy);
+    display.drawOperation(state, SONGS_COUNT);
     handleOperationButtonPresses();
   }
 
