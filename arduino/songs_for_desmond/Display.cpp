@@ -3,7 +3,6 @@
 #include "Display.h"
 
 Display::Display() {
-  animationFrame = 0;
   // TODO: avoid new, try member initializer list
   tinyfont = new Tinyfont(Arduboy2Base::sBuffer, WIDTH, HEIGHT);
 }
