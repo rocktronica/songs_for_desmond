@@ -61,16 +61,14 @@ void Display::drawPrettyTime(
   uint16_t minutes = floor(seconds / 60);
 
   tinyfont->setCursor(x, y);
-  tinyfont->print(String(minutes));
+  tinyfont->print(minutes);
 
   tinyfont->setCursor(x + CHAR_SIZE, y);
-  tinyfont->print(":");
+  tinyfont->print(F(":"));
 
   tinyfont->setCursor(x + CHAR_SIZE + 3, y);
-  tinyfont->print(
-      (seconds < 10 ? "0" : "")
-      + String(seconds)
-  );
+  tinyfont->print(seconds < 10 ? F("0") : F(""));
+  tinyfont->print(seconds);
 }
 
 void Display::drawProgressBar(
@@ -125,7 +123,7 @@ void Display::drawIntro(
   }
 
   tinyfont->setCursor(GAP_OUTER, GAP_OUTER);
-  tinyfont->print("SONGS\nFOR\nDESMOND");
+  tinyfont->print(F("SONGS\nFOR\nDESMOND"));
 
   drawVolume(state);
 
@@ -134,7 +132,7 @@ void Display::drawIntro(
       WIDTH - CHAR_SIZE * 4 - 1 * (4 - 1) - GAP_OUTER,
       HEIGHT - CHAR_SIZE * 2 - 1 * (2 - 1) - GAP_OUTER
     );
-    tinyfont->print("2024\nDADA");
+    tinyfont->print(F("2024\nDADA"));
   }
 }
 
@@ -145,10 +143,9 @@ void Display::drawOperation(
   drawAvatarFirst(GAP_OUTER, GAP_OUTER);
 
   tinyfont->setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y);
-  tinyfont->print(
-    String(state.trackIndex + 1) + "/"
-    + String(songsCount)
-  );
+  tinyfont->print(state.trackIndex + 1);
+  tinyfont->print(F("/"));
+  tinyfont->print(songsCount);
 
   tinyfont->setCursor(
     OPERATION_TEXT_X,
