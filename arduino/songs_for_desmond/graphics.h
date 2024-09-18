@@ -1,5 +1,7 @@
 #pragma once
 
+// clang-format off
+
 const unsigned char PROGMEM walk[] =
 {
 // width, height,

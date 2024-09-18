@@ -1,21 +1,16 @@
 #include <Arduboy2.h>
 #include <ArduboyTones.h>
 
-#include "common.h"
 #include "Display.h"
+#include "common.h"
 
 Arduboy2Base arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Display display;
 
-State state = {
-    Intro,
-    0, 0,
-    Low,
-    false};
+State state = {Intro, 0, 0, Low, false};
 
-void setStage(Stage stage)
-{
+void setStage(Stage stage) {
   state.stage = stage;
   state.eventStarted = millis();
   state.isPlaying = false;
@@ -25,125 +20,87 @@ void setStage(Stage stage)
   changeTrack(0);
 }
 
-void reset()
-{
-  setStage(Stage::Intro);
-}
+void reset() { setStage(Stage::Intro); }
 
-void setup()
-{
+void setup() {
   arduboy.begin();
   arduboy.setFrameRate(FPS);
   reset();
 }
 
 bool hasBeenUpdatedThisBeat = false;
-void updateAvatar()
-{
+void updateAvatar() {
   int16_t doubleTempoBeat = getArduboyTonesBeat(
-      getElapsedPlayTime(state),
-      getSongBPM(state.trackIndex) * 2);
+      getElapsedPlayTime(state), getSongBPM(state.trackIndex) * 2);
 
-  if (doubleTempoBeat % 2 == 0)
-  {
-    if (!state.isPlaying || !hasBeenUpdatedThisBeat)
-    {
+  if (doubleTempoBeat % 2 == 0) {
+    if (!state.isPlaying || !hasBeenUpdatedThisBeat) {
       display.randomizeAvatar();
       hasBeenUpdatedThisBeat = true;
     }
-  }
-  else
-  {
+  } else {
     hasBeenUpdatedThisBeat = false;
   }
 }
 
-void changeTrack(int8_t newTrackIndex)
-{
+void changeTrack(int8_t newTrackIndex) {
   state.trackIndex = newTrackIndex;
 
-  if (state.isPlaying)
-  {
+  if (state.isPlaying) {
     playCurrentSong();
   }
 }
 
-void updateVolume(Volume volume)
-{
+void updateVolume(Volume volume) {
   state.volume = constrain(volume, LOW, High);
 
-  if (state.volume == Volume::Mute)
-  {
+  if (state.volume == Volume::Mute) {
     arduboy.audio.off();
-  }
-  else
-  {
+  } else {
     arduboy.audio.on();
   }
 
-  arduboyTones.volumeMode(
-      state.volume == Volume::High
-          ? VOLUME_ALWAYS_HIGH
-          : VOLUME_ALWAYS_NORMAL);
+  arduboyTones.volumeMode(state.volume == Volume::High ? VOLUME_ALWAYS_HIGH
+                                                       : VOLUME_ALWAYS_NORMAL);
 }
 
-void handleVolumeButtonPresses()
-{
-  if (arduboy.justPressed(UP_BUTTON))
-  {
+void handleVolumeButtonPresses() {
+  if (arduboy.justPressed(UP_BUTTON)) {
     updateVolume(state.volume + 1);
-  }
-  else if (arduboy.justPressed(DOWN_BUTTON))
-  {
+  } else if (arduboy.justPressed(DOWN_BUTTON)) {
     updateVolume(state.volume - 1);
   }
 }
 
-void handleOperationButtonPresses()
-{
-  if (arduboy.justPressed(A_BUTTON))
-  {
+void handleOperationButtonPresses() {
+  if (arduboy.justPressed(A_BUTTON)) {
     state.isPlaying = false;
-  }
-  else if (arduboy.justPressed(B_BUTTON))
-  {
+  } else if (arduboy.justPressed(B_BUTTON)) {
     state.isPlaying = true;
     playCurrentSong();
   }
 
-  if (arduboy.justPressed(RIGHT_BUTTON))
-  {
+  if (arduboy.justPressed(RIGHT_BUTTON)) {
     changeTrack(state.trackIndex + 1);
     display.randomizeAvatar();
-  }
-  else if (arduboy.justPressed(LEFT_BUTTON))
-  {
-    changeTrack(
-        getElapsedPlayTime(state) < 1000
-            ? state.trackIndex - 1
-            : state.trackIndex);
+  } else if (arduboy.justPressed(LEFT_BUTTON)) {
+    changeTrack(getElapsedPlayTime(state) < 1000 ? state.trackIndex - 1
+                                                 : state.trackIndex);
     display.randomizeAvatar();
   }
 
   handleVolumeButtonPresses();
 
-  if (state.trackIndex < 0 || state.trackIndex >= SONGS_COUNT)
-  {
+  if (state.trackIndex < 0 || state.trackIndex >= SONGS_COUNT) {
     reset();
   }
 }
 
-void handleIntroButtonPresses()
-{
-  if (
-      arduboy.justPressed(A_BUTTON) ||
-      arduboy.justPressed(B_BUTTON) ||
-      arduboy.justPressed(RIGHT_BUTTON))
-  {
+void handleIntroButtonPresses() {
+  if (arduboy.justPressed(A_BUTTON) || arduboy.justPressed(B_BUTTON) ||
+      arduboy.justPressed(RIGHT_BUTTON)) {
     setStage(Stage::Operation);
-  }
-  else if (arduboy.justPressed(LEFT_BUTTON))
-  {
+  } else if (arduboy.justPressed(LEFT_BUTTON)) {
     setStage(Stage::Operation);
     changeTrack(SONGS_COUNT - 1);
   }
@@ -151,56 +108,43 @@ void handleIntroButtonPresses()
   handleVolumeButtonPresses();
 }
 
-void playCurrentSong()
-{
+void playCurrentSong() {
   arduboyTones.tones(getSongScore(state.trackIndex));
   state.eventStarted = millis();
 }
 
-void loop()
-{
-  if (!state.isPlaying)
-  {
+void loop() {
+  if (!state.isPlaying) {
     arduboyTones.noTone();
   }
 
-  if (!arduboy.nextFrame())
-  {
+  if (!arduboy.nextFrame()) {
     return;
   }
 
   arduboy.pollButtons();
   arduboy.clear();
 
-  if (state.stage == Intro)
-  {
-    if (arduboy.everyXFrames(INTRO_FRAMERATE))
-    {
+  if (state.stage == Intro) {
+    if (arduboy.everyXFrames(INTRO_FRAMERATE)) {
       display.incrementAnimation();
     }
 
     display.drawIntro(state);
     handleIntroButtonPresses();
-  }
-  else
-  {
+  } else {
     uint16_t elapsedPlayTime = getElapsedPlayTime(state);
     uint16_t songLength = getSongLength(state.trackIndex);
 
-    if (state.isPlaying && elapsedPlayTime >= songLength)
-    {
-      if (state.trackIndex < SONGS_COUNT - 1)
-      {
+    if (state.isPlaying && elapsedPlayTime >= songLength) {
+      if (state.trackIndex < SONGS_COUNT - 1) {
         changeTrack(state.trackIndex + 1);
-      }
-      else if (state.trackIndex >= SONGS_COUNT - 1)
-      {
+      } else if (state.trackIndex >= SONGS_COUNT - 1) {
         return reset();
       }
     }
 
-    if (state.isPlaying && elapsedPlayTime < songLength - TRACK_GAP)
-    {
+    if (state.isPlaying && elapsedPlayTime < songLength - TRACK_GAP) {
       updateAvatar();
     }
 
@@ -210,10 +154,8 @@ void loop()
 
   arduboy.display();
 
-  if (
-      state.stage == Intro &&
-      (millis() - state.eventStarted) >= INTRO_SECONDS * 1000)
-  {
+  if (state.stage == Intro &&
+      (millis() - state.eventStarted) >= INTRO_SECONDS * 1000) {
     setStage(Stage::Operation);
   }
 }

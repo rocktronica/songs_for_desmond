@@ -1,5 +1,7 @@
 #pragma once
 
+// clang-format off
+
 //
 // MIT License
 // 

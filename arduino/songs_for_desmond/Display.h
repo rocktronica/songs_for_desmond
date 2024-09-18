@@ -4,8 +4,8 @@
 #include <Tinyfont.h>
 
 #include "common.h"
-#include "utils.h"
 #include "graphics.h"
+#include "utils.h"
 
 // REMEMBER: screen size is 128x64
 
@@ -36,8 +36,7 @@
 #define VOLUME_SPRITE_WIDTH 7
 #define VOLUME_SPRITE_HEIGHT 4
 
-class Display
-{
+class Display {
 private:
   int8_t animationFrame = 0;
   Tinyfont tinyfont;
@@ -53,14 +52,9 @@ public:
 
   void drawAvatarFirst(int8_t x, int8_t y);
 
-  void drawPrettyTime(
-      int8_t x, int8_t y,
-      uint16_t millis);
+  void drawPrettyTime(int8_t x, int8_t y, uint16_t millis);
 
-  void drawProgressBar(
-      int8_t x, int8_t y,
-      uint8_t width,
-      State &state);
+  void drawProgressBar(int8_t x, int8_t y, uint8_t width, State &state);
 
   void drawVolume(State &state);
 
