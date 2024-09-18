@@ -11,17 +11,17 @@ inline int16_t getArduboyTonesBeat(uint16_t millis, uint16_t bpm)
 
 inline uint16_t getSongLength(int8_t trackIndex)
 {
-  return songs[TRACKS[trackIndex]].length + TRACK_GAP;
+  return SONG_LENGTHS[TRACKS[trackIndex]] + TRACK_GAP;
 }
 
 inline uint16_t getSongBPM(int8_t trackIndex)
 {
-  return songs[TRACKS[trackIndex]].beatsPerMinute;
+  return SONG_BPMS[TRACKS[trackIndex]];
 }
 
 inline const uint16_t *getSongScore(int8_t trackIndex)
 {
-  return songs[TRACKS[trackIndex]].score;
+  return SONG_SCORES[TRACKS[trackIndex]];
 }
 
 inline uint16_t getElapsedPlayTime(State &state)

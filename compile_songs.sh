@@ -109,8 +109,28 @@ for filename in $PWD/midi/*.mid; do
     i=$((i + 1))
 done
 
-# TODO: move into its own file
-echo "Exposing songs for tracks"
+echo "Exposing SONG_SCORES[] and SONG_LENGTHS[]"
+echo "
+const uint16_t * const SONG_SCORES[] = {" >> "${scores_path}"
+echo "
+const uint16_t SONG_LENGTHS[] = {" >> "${lengths_path}"
+
+for filename in $PWD/midi/*.mid; do
+    const_stub=$(get_const_stub $filename)
+
+    echo "    ${const_stub}_SCORE," >> "${scores_path}"
+    echo "    ${const_stub}_LENGTH," >> "${lengths_path}"
+done
+
+echo "};" >> "${scores_path}"
+echo "};" >> "${lengths_path}"
+
+}
+
+# TODO: encapsulate song stuff away from track usage.
+# songs_for_desmond shouldn't need so much access to compiled output.
+# And why's this in lengths_path too huh?
+echo "Exposing compiled song order for tracks"
 echo >> "${lengths_path}"
 i=0
 for filename in $PWD/midi/*.mid; do
@@ -120,5 +140,3 @@ for filename in $PWD/midi/*.mid; do
 
     i=$((i + 1))
 done
-
-}
