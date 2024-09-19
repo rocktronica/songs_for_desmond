@@ -16,6 +16,10 @@ inline uint16_t getSongBPM(int8_t trackIndex) {
   return SONG_BPMS[TRACKS[trackIndex]];
 }
 
+inline FlashStringHelper getPrintableSongTitle(int8_t trackIndex) {
+  return readFlashStringPointer(&SONG_TITLES[TRACKS[trackIndex]]);
+}
+
 inline const uint16_t *getSongScore(int8_t trackIndex) {
   return SONG_SCORES[TRACKS[trackIndex]];
 }

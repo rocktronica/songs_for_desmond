@@ -100,12 +100,7 @@ void Display::drawOperation(State &state, int8_t songsCount) {
   tinyfont.print(songsCount);
 
   tinyfont.setCursor(OPERATION_TEXT_X, OPERATION_TEXT_Y + CHAR_SIZE + GAP_MAX);
-  // NOTE: Ideally wouldn't have any SONG_ stuff here and would
-  // rely solely on getSong...() utils, but passing progmem
-  // references is beyond my understanding, so this is what I
-  // gotta do to move on with my life
-  tinyfont.print(
-      readFlashStringPointer(&SONG_TITLES[TRACKS[state.trackIndex]]));
+  tinyfont.print(getPrintableSongTitle(state.trackIndex));
 
   drawVolume(state);
 
