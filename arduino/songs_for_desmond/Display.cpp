@@ -2,9 +2,6 @@
 
 #include "Display.h"
 
-Display::Display()
-    : animationFrame(0), tinyfont(Arduboy2Base::sBuffer, WIDTH, HEIGHT) {}
-
 void Display::resetAnimation() { animationFrame = 0; }
 
 void Display::incrementAnimation() { animationFrame++; }

@@ -38,12 +38,10 @@
 
 class Display {
 private:
-  int8_t animationFrame = 0;
-  Tinyfont tinyfont;
+  int8_t animationFrame{0};
+  Tinyfont tinyfont{Arduboy2Base::sBuffer, WIDTH, HEIGHT};
 
 public:
-  Display();
-
   void resetAnimation();
 
   void incrementAnimation();
