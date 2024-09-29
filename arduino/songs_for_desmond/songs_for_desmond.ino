@@ -8,7 +8,7 @@ Arduboy2Base arduboy;
 ArduboyTones arduboyTones(arduboy.audio.enabled);
 Display display;
 
-State state = {Intro, 0, 0, Low, false};
+State state = {Stage::Intro, 0, 0, Volume::Low, false};
 
 void setStage(Stage stage) {
   state.stage = stage;
@@ -52,16 +52,17 @@ void changeTrack(int8_t newTrackIndex) {
 }
 
 void updateVolume(Volume volume) {
-  state.volume = constrain(volume, Mute, High);
+  state.volume = constrain(volume, Volume::Mute, Volume::High);
 
   if (state.volume == Volume::Mute) {
     arduboy.audio.off();
   } else {
     arduboy.audio.on();
-  }
 
-  arduboyTones.volumeMode(state.volume == Volume::High ? VOLUME_ALWAYS_HIGH
-                                                       : VOLUME_ALWAYS_NORMAL);
+    arduboyTones.volumeMode(state.volume == Volume::High
+                                ? VOLUME_ALWAYS_HIGH
+                                : VOLUME_ALWAYS_NORMAL);
+  }
 }
 
 void handleVolumeButtonPresses() {
@@ -125,7 +126,7 @@ void loop() {
   arduboy.pollButtons();
   arduboy.clear();
 
-  if (state.stage == Intro) {
+  if (state.stage == Stage::Intro) {
     if (arduboy.everyXFrames(INTRO_FRAMERATE)) {
       display.incrementAnimation();
     }
@@ -155,7 +156,7 @@ void loop() {
 
   arduboy.display();
 
-  if (state.stage == Intro &&
+  if (state.stage == Stage::Intro &&
       (millis() - state.eventStarted) >= INTRO_SECONDS * 1000) {
     setStage(Stage::Operation);
   }

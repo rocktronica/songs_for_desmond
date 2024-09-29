@@ -13,8 +13,9 @@
 
 const int8_t SONGS_COUNT = sizeof(TRACKS) / sizeof(int8_t);
 
+// NOTE: Relying on implicit conversion to integer.
+// Orders are intentional!
 enum Stage { Intro, Operation };
-
 enum Volume { Mute, Low, High };
 
 struct State {
