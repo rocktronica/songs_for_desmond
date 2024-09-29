@@ -8,20 +8,24 @@ inline int16_t getArduboyTonesBeat(uint16_t millis, uint16_t bpm) {
   return (static_cast<uint32_t>(millis) * 1024 / (60000 / bpm)) / 1000;
 }
 
+inline uint8_t getSongIndex(uint8_t trackIndex) {
+  return pgm_read_byte(&TRACKS[trackIndex]);
+}
+
 inline uint16_t getSongLength(int8_t trackIndex) {
-  return SONG_LENGTHS[TRACKS[trackIndex]] + TRACK_GAP;
+  return SONG_LENGTHS[getSongIndex(trackIndex)] + TRACK_GAP;
 }
 
 inline uint16_t getSongBPM(int8_t trackIndex) {
-  return SONG_BPMS[TRACKS[trackIndex]];
+  return SONG_BPMS[getSongIndex(trackIndex)];
 }
 
 inline FlashStringHelper getPrintableSongTitle(int8_t trackIndex) {
-  return readFlashStringPointer(&SONG_TITLES[TRACKS[trackIndex]]);
+  return readFlashStringPointer(&SONG_TITLES[getSongIndex(trackIndex)]);
 }
 
 inline const uint16_t *getSongScore(int8_t trackIndex) {
-  return SONG_SCORES[TRACKS[trackIndex]];
+  return SONG_SCORES[getSongIndex(trackIndex)];
 }
 
 inline uint16_t getElapsedPlayTime(State &state) {

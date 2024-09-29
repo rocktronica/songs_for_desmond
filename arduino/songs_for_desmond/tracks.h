@@ -1,7 +1,7 @@
 #pragma once
 
 // Songs are songs; tracks are ordered songs
-const int8_t TRACKS[] = {
+const int8_t TRACKS[] PROGMEM = {
     MR_STANDING_WHOS_MY_LITTLE_STANDING_BOY,
     GUY_IN_A_COP_CAR_RUNNING_A_RED_LIGHT,
     MY_BABY_IS_A_PUNCHING_MACHINE,
