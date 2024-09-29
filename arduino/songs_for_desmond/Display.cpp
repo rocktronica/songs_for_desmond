@@ -17,8 +17,8 @@ void Display::randomizeAvatar() {
 }
 
 void Display::drawAvatarFirst(int8_t x, int8_t y) {
-  SpritesB::drawOverwrite(x - AVATAR_X_OFFSET, y - AVATAR_Y_OFFSET, walk,
-                          animationFrame);
+  Sprites::drawOverwrite(x - AVATAR_X_OFFSET, y - AVATAR_Y_OFFSET, walk,
+                         animationFrame);
   Arduboy2Base::drawRect(x, y, AVATAR_WIDTH, AVATAR_HEIGHT);
 
   // HACK: fill remaining space to cover overflow...
@@ -67,13 +67,13 @@ void Display::drawProgressBar(int8_t x, int8_t y,
 }
 
 void Display::drawVolume(State &state) {
-  SpritesB::drawOverwrite(WIDTH - GAP_OUTER - VOLUME_SPRITE_WIDTH,
-                          OPERATION_TEXT_Y, volume, state.volume);
+  Sprites::drawOverwrite(WIDTH - GAP_OUTER - VOLUME_SPRITE_WIDTH,
+                         OPERATION_TEXT_Y, volume, state.volume);
 }
 
 void Display::drawIntro(State &state) {
   if (animationFrame <= INTRO_FRAMES) {
-    SpritesB::drawOverwrite(WIDTH - WALK_SPRITE_WIDTH, 0, walk, animationFrame);
+    Sprites::drawOverwrite(WIDTH - WALK_SPRITE_WIDTH, 0, walk, animationFrame);
   }
 
   tinyfont.setCursor(GAP_OUTER, GAP_OUTER);
