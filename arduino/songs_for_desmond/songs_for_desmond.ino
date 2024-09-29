@@ -52,7 +52,7 @@ void changeTrack(int8_t newTrackIndex) {
 }
 
 void updateVolume(Volume volume) {
-  state.volume = constrain(volume, LOW, High);
+  state.volume = constrain(volume, Mute, High);
 
   if (state.volume == Volume::Mute) {
     arduboy.audio.off();
