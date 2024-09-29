@@ -140,7 +140,8 @@ void loop() {
       if (state.trackIndex < SONGS_COUNT - 1) {
         changeTrack(state.trackIndex + 1);
       } else if (state.trackIndex >= SONGS_COUNT - 1) {
-        return reset();
+        reset();
+        return;
       }
     }
 
