@@ -28,6 +28,8 @@ The other thing nobody tells you is that the songs... are _good_.
 - There's also a `./make_sprite_sheet.sh` script to convert a movie into the graphics. I think it's conceptually right but I had to do some manual pixel pushing outside it.
 - I'm trying hard to get better at C++ but it doesn't come naturally to me. There are optimizations to be had, for sure.
 
+My deep thanks to @Pharap for their thorough code review and thoughtful suggestions.
+
 ## License
 
 Code and general UI is MIT or as components allow.
