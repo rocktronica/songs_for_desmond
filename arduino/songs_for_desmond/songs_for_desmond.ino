@@ -24,7 +24,7 @@ void reset() { setStage(Stage::Intro); }
 
 void setup() {
   arduboy.begin();
-  arduboy.setFrameRate(FPS);
+  arduboy.setFrameRate(fps);
   reset();
 }
 
@@ -127,7 +127,7 @@ void loop() {
   arduboy.clear();
 
   if (state.stage == Stage::Intro) {
-    if (arduboy.everyXFrames(INTRO_FRAMERATE)) {
+    if (arduboy.everyXFrames(introFramerate)) {
       display.incrementAnimation();
     }
 
@@ -146,7 +146,7 @@ void loop() {
       }
     }
 
-    if (state.isPlaying && elapsedPlayTime < songLength - TRACK_GAP) {
+    if (state.isPlaying && elapsedPlayTime < songLength - trackGap) {
       updateAvatar();
     }
 
@@ -157,7 +157,7 @@ void loop() {
   arduboy.display();
 
   if (state.stage == Stage::Intro &&
-      (millis() - state.eventStarted) >= INTRO_SECONDS * 1000) {
+      (millis() - state.eventStarted) >= introSeconds * 1000) {
     setStage(Stage::Operation);
   }
 }

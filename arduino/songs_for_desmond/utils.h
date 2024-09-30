@@ -13,7 +13,7 @@ inline uint8_t getSongIndex(uint8_t trackIndex) {
 }
 
 inline uint16_t getSongLength(int8_t trackIndex) {
-  return songLengths[getSongIndex(trackIndex)] + TRACK_GAP;
+  return songLengths[getSongIndex(trackIndex)] + trackGap;
 }
 
 inline uint16_t getSongBPM(int8_t trackIndex) {

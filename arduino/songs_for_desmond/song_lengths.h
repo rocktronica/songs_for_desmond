@@ -63,30 +63,30 @@ const uint16_t songLengths[] = {
     whosMyLittleDaikiniBabyLength,
 };
 
-#define anyKindOfCarAndAnyKindOfTruck 0
-#define babySkin 1
-#define bouncingABall 2
-#define bubblesBubblesWhosGotTheBubbles 3
-#define byeByeBubblesByeByeBathwater 4
-#define dadaDo 5
-#define gettingPapaSomeCoffee 6
-#define guyInACopCarRunningARedLight 7
-#define iGotARockInMyPocket 8
-#define iMakeALittleTaco 9
-#define iThinkALotAboutRinsingThatCoffeePot 10
-#define letsGoPeeWithDad 11
-#define mrStandingWhosMyLittleStandingBoy 12
-#define myBabyIsAPunchingMachine 13
-#define myBabyLovesToGoPoopy 14
-#define oneTwoThreeFourFiveSixSevenEightNineTen 15
-#define poopStuckToAButt 16
-#define puttingOnYourPantsLikeABigBoy 17
-#define streetSweeper 18
-#define thatsHowYouSpellMama 19
-#define thisTownsGotALotOfConstruction 20
-#define washingYourFace 21
-#define weAreDressingUpAsAFamilyOfSkeletons 22
-#define wereAlmostHome 23
-#define whenYoureDoneWithYourHamYouThrowItOnTheGround 24
-#define whosMyLittleBabyBird 25
-#define whosMyLittleDaikiniBaby 26
+const uint8_t anyKindOfCarAndAnyKindOfTruck = 0;
+const uint8_t babySkin = 1;
+const uint8_t bouncingABall = 2;
+const uint8_t bubblesBubblesWhosGotTheBubbles = 3;
+const uint8_t byeByeBubblesByeByeBathwater = 4;
+const uint8_t dadaDo = 5;
+const uint8_t gettingPapaSomeCoffee = 6;
+const uint8_t guyInACopCarRunningARedLight = 7;
+const uint8_t iGotARockInMyPocket = 8;
+const uint8_t iMakeALittleTaco = 9;
+const uint8_t iThinkALotAboutRinsingThatCoffeePot = 10;
+const uint8_t letsGoPeeWithDad = 11;
+const uint8_t mrStandingWhosMyLittleStandingBoy = 12;
+const uint8_t myBabyIsAPunchingMachine = 13;
+const uint8_t myBabyLovesToGoPoopy = 14;
+const uint8_t oneTwoThreeFourFiveSixSevenEightNineTen = 15;
+const uint8_t poopStuckToAButt = 16;
+const uint8_t puttingOnYourPantsLikeABigBoy = 17;
+const uint8_t streetSweeper = 18;
+const uint8_t thatsHowYouSpellMama = 19;
+const uint8_t thisTownsGotALotOfConstruction = 20;
+const uint8_t washingYourFace = 21;
+const uint8_t weAreDressingUpAsAFamilyOfSkeletons = 22;
+const uint8_t wereAlmostHome = 23;
+const uint8_t whenYoureDoneWithYourHamYouThrowItOnTheGround = 24;
+const uint8_t whosMyLittleBabyBird = 25;
+const uint8_t whosMyLittleDaikiniBaby = 26;

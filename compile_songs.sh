@@ -146,7 +146,7 @@ i=0
 for filename in $PWD/midi/*.mid; do
     const_stub=$(get_const_stub $filename)
 
-    echo "#define ${const_stub} ${i}" >> "${lengths_path}"
+    echo "const uint8_t ${const_stub} = ${i};" >> "${lengths_path}"
 
     i=$((i + 1))
 done

@@ -9,7 +9,7 @@
 #include "song_titles.h"
 #include "tracks.h"
 
-#define TRACK_GAP 500
+const int trackGap = 500;
 
 const int8_t songsCount = sizeof(tracks) / sizeof(int8_t);
 

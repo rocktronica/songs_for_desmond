@@ -9,32 +9,32 @@
 
 // REMEMBER: screen size is 128x64
 
-#define CHAR_SIZE 4 // TinyFont 4x4
+const int charSize = 4; // TinyFont 4x4
 
-#define GAP_MIN 1
-#define GAP_MAX 4
-#define GAP_OUTER 4
+const int gapMin = 1;
+const int gapMax = 4;
+const int gapOuter = 4;
 
-#define TIME_WIDTH (CHAR_SIZE * 3 + 4)
-#define PROGRESS_BAR_HEIGHT CHAR_SIZE
+const int timeWidth = (charSize * 3 + 4);
+const int progressBarHeight = charSize;
 
-#define FPS 12
-#define INTRO_SECONDS 3
-#define INTRO_FRAMES 10
-#define INTRO_FRAMERATE (FPS / 6)
+const int fps = 12;
+const int introSeconds = 3;
+const int introFrames = 10;
+const int introFramerate = (fps / 6);
 
-#define AVATAR_HEIGHT (HEIGHT - PROGRESS_BAR_HEIGHT - GAP_OUTER * 2 - GAP_MAX)
-#define AVATAR_WIDTH AVATAR_HEIGHT
-#define AVATAR_FRAMES INTRO_FRAMES - 2
-#define AVATAR_X_OFFSET 8
-#define AVATAR_Y_OFFSET 4
-#define WALK_SPRITE_WIDTH 92
+const int avatarHeight = (HEIGHT - progressBarHeight - gapOuter * 2 - gapMax);
+const int avatarWidth = avatarHeight;
+const int avatarFrames = introFrames - 2;
+const int avatarXOffset = 8;
+const int avatarYOffset = 4;
+const int walkSpriteWidth = 92;
 
-#define OPERATION_TEXT_X GAP_OUTER + AVATAR_WIDTH + GAP_MAX
-#define OPERATION_TEXT_Y GAP_OUTER
+const int operationTextX = gapOuter + avatarWidth + gapMax;
+const int operationTextY = gapOuter;
 
-#define VOLUME_SPRITE_WIDTH 7
-#define VOLUME_SPRITE_HEIGHT 4
+const int volumeSpriteWidth = 7;
+const int volumeSpriteHeight = 4;
 
 class Display {
 private:
