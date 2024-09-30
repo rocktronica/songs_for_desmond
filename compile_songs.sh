@@ -42,7 +42,16 @@ function get_no_extension() {
 function get_const_stub() {
     pathname=$1
     no_extension=$(get_no_extension "${relative_path%.*}")
-    echo "${no_extension}" | tr "[a-z]" "[A-Z]" | tr " " "_"
+    node -e "
+    const toCamelCase = str =>
+        str.toLowerCase().replace(/([_][a-z])/g, group =>
+            group
+            .toUpperCase()
+            .replace('_', '')
+        );
+
+    console.log(toCamelCase(\"${no_extension}\"));
+    "
 }
 
 i=0
@@ -55,11 +64,12 @@ for filename in $PWD/midi/*.mid; do
     output_path="${input}.c"
 
     const_stub=$(get_const_stub $filename)
+
     title=$(echo "${no_extension}" | tr "[a-z]" "[A-Z]" | tr "_" " ")
 
     echo " - Creating ${output_path}"
     $midi2tones -o2 "${input}" >/dev/null
-    sed -i '' "s/score/${const_stub}_SCORE/g" "${output_path}"
+    sed -i '' "s/score/${const_stub}Score/g" "${output_path}"
 
     echo " - Appending to ${scores_path}"
     cat "${output_path}" | grep -v "^//" >> "${scores_path}"
@@ -71,7 +81,7 @@ for filename in $PWD/midi/*.mid; do
             | tr '\n' '+';
         echo "0"
     )
-    echo "const uint16_t ${const_stub}_LENGTH = $((math_string));" \
+    echo "const uint16_t ${const_stub}Length = $((math_string));" \
         >> "${lengths_path}"
 
     echo " - Checking ${bpms_path}"
@@ -79,8 +89,8 @@ for filename in $PWD/midi/*.mid; do
         echo "   - Stubbing ${const_stub}"
         echo >> "${bpms_path}"
         echo "// TODO: fix, move these into place" >> "${bpms_path}"
-        echo "const uint16_t ${const_stub}_BPM = 120; // ?" >> "${bpms_path}"
-        echo "    ${const_stub}_BPM," >> "${bpms_path}"
+        echo "const uint16_t ${const_stub}Bpm = 120; // ?" >> "${bpms_path}"
+        echo "    ${const_stub}Bpm," >> "${bpms_path}"
     fi
 
     echo " - Checking ${titles_path}"
@@ -88,8 +98,8 @@ for filename in $PWD/midi/*.mid; do
         echo "   - Stubbing ${const_stub}"
         echo >> "${titles_path}"
         echo "// TODO: move these into place" >> "${titles_path}"
-        echo "    ${const_stub}_TITLE," >> "${titles_path}"
-        echo "const char ${const_stub}_TITLE[] PROGMEM = \"${title}\";" \
+        echo "    ${const_stub}Title," >> "${titles_path}"
+        echo "const char ${const_stub}Title[] PROGMEM = \"${title}\";" \
             >> "${titles_path}"
     fi
 
@@ -109,17 +119,17 @@ for filename in $PWD/midi/*.mid; do
     i=$((i + 1))
 done
 
-echo "Exposing SONG_SCORES[] and SONG_LENGTHS[]"
+echo "Exposing songScores[] and songLengths[]"
 echo "
-const uint16_t * const SONG_SCORES[] = {" >> "${scores_path}"
+const uint16_t * const songScores[] = {" >> "${scores_path}"
 echo "
-const uint16_t SONG_LENGTHS[] = {" >> "${lengths_path}"
+const uint16_t songLengths[] = {" >> "${lengths_path}"
 
 for filename in $PWD/midi/*.mid; do
     const_stub=$(get_const_stub $filename)
 
-    echo "    ${const_stub}_SCORE," >> "${scores_path}"
-    echo "    ${const_stub}_LENGTH," >> "${lengths_path}"
+    echo "    ${const_stub}Score," >> "${scores_path}"
+    echo "    ${const_stub}Length," >> "${lengths_path}"
 done
 
 echo "};" >> "${scores_path}"

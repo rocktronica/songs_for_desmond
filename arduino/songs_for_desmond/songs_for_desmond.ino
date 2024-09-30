@@ -92,7 +92,7 @@ void handleOperationButtonPresses() {
 
   handleVolumeButtonPresses();
 
-  if (state.trackIndex < 0 || state.trackIndex >= SONGS_COUNT) {
+  if (state.trackIndex < 0 || state.trackIndex >= songsCount) {
     reset();
   }
 }
@@ -103,7 +103,7 @@ void handleIntroButtonPresses() {
     setStage(Stage::Operation);
   } else if (arduboy.justPressed(LEFT_BUTTON)) {
     setStage(Stage::Operation);
-    changeTrack(SONGS_COUNT - 1);
+    changeTrack(songsCount - 1);
   }
 
   handleVolumeButtonPresses();
@@ -138,9 +138,9 @@ void loop() {
     uint16_t songLength = getSongLength(state.trackIndex);
 
     if (state.isPlaying && elapsedPlayTime >= songLength) {
-      if (state.trackIndex < SONGS_COUNT - 1) {
+      if (state.trackIndex < songsCount - 1) {
         changeTrack(state.trackIndex + 1);
-      } else if (state.trackIndex >= SONGS_COUNT - 1) {
+      } else if (state.trackIndex >= songsCount - 1) {
         reset();
         return;
       }
@@ -150,7 +150,7 @@ void loop() {
       updateAvatar();
     }
 
-    display.drawOperation(state, SONGS_COUNT);
+    display.drawOperation(state, songsCount);
     handleOperationButtonPresses();
   }
 

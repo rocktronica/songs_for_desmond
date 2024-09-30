@@ -11,7 +11,7 @@
 
 #define TRACK_GAP 500
 
-const int8_t SONGS_COUNT = sizeof(TRACKS) / sizeof(int8_t);
+const int8_t songsCount = sizeof(tracks) / sizeof(int8_t);
 
 // NOTE: Relying on implicit conversion to integer.
 // Orders are intentional!
